@@ -10,30 +10,26 @@ use PB::Util;
 use PB::Auth;
 use Cwd 'abs_path';
 use JSON::XS;
+use Mojolicious::Sessions;
+use Data::Dumper;
 
 my $base_dir = abs_path(dirname(__FILE__));
 
-any 'login' => sub {
-    my $self = shift;
-    return 1;
-};
-
 under sub {
     my $self = shift;
-    unless ($self->is_login) {
-        
-        if ($self->param('username') && $self->param('sign') && $self->param('password')) {
-            if ($self->login($self->param('username'), $self->param('password'), $self->param('sign'))) {
-                return 1;
-            }
-        }
-
+    my $config = get_config();
+    my $sessions = Mojolicious::Sessions->new;
+    my $login_session_key = $config->{login_session_key};
+    $sessions->cookie_name($login_session_key);
+    $sessions->default_expiration(86400);
+    $sessions->{$login_session_key} = 'hoho';
+    if ($self->session->{user}) {
+        return 1;
+    } else {
         my $curr_url = $self->req->url;
         $self->redirect_to('/login?redirect_uri=' . url_escape($curr_url));
         return;
     }
-
-    return 1;
 };
 
 get '/' => sub {
@@ -58,9 +54,8 @@ sub get_config{
         $config = decode_json($content);
     };
 
+    $PB::Util::global_config = $config;
     return $config || {};
 };
-
-$PB::Util::global_config = get_config();
 
 app->start;

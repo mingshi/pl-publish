@@ -3,3 +3,4 @@ use strict;
 use warnings;
 
 our $global_config = {};
+sub CONFIG { $global_config };
