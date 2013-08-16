@@ -4,6 +4,7 @@ use Mojo::Util qw/md5_sum/;
 use Tie::IxHash;
 use Mojo::UserAgent;
 use Mojo::Util qw/encode decode url_escape/;
+use JSON::XS;
 use strict;
 use warnings;
 use utf8;

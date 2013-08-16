@@ -64,6 +64,17 @@ sub startup {
             return $user;
         },
         'validate_user' => sub {
+            my ($self, $username, $password, $msg) = @_;
+            my $login = M('user')->login($username, $password, $self->config->{login_key}, $self->config->{sign_key}, $self->config->{auth_url});
+            
+            if ($login->{status} == "err") {
+                $msg->{data} = $login->{msg};
+                return 0;
+            }
+
+            my $user_id = $login->{info}{id};
+
+            return $user_id;
         },
     });
 
@@ -73,11 +84,15 @@ sub startup {
     my $r = $self->routes;
 
     #Nomal route to controller
-     
+    $r = $r->under(sub {
+        my $self = shift;
+        my $path = $self->req->url->path;
+
+        
+    });
  
     
     
-    return 1;
 }
 
 1;
