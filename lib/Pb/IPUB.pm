@@ -87,12 +87,43 @@ sub startup {
     $r = $r->under(sub {
         my $self = shift;
         my $path = $self->req->url->path;
+        if (my $controller = $self->match->captures->{'controller'}) {
+            my $module = $self->match->root->namespaces->[0] . '::' . camelize($controller);
+            my $action = $self->match->captures->{'action'};
 
+            unless ($module ~~ /^\w(?:[\w:']*\w)?$/
+                and ($module->can('new') || eval "require $module; 1")
+                and $module->can($action)
+                and $action !~ /^_/
+            ) {
+                $self->render_not_found;
+                return;
+            }
+
+        }
+
+        if ($path ~~ m{^/login}) {
+                return 1;
+        }
+
+        unless ($self->is_user_authenticated) {
+            my $current_url = $self->req->url;
+            my $redirect_url = '/login?redirect_uri=' . url_escape($current_url);
+            $self->redirect_to($redirect_url);
+            return;
+        }
         
+        return 1;
     });
- 
-    
-    
+
+    $r->get('/logout', sub {
+        my $self = shift;
+        $self->logout;
+
+        $self->redirect_to('/login');
+    });
+
+    $r->route('/:controller/:action')->to(controller => 'index', action => 'index'); 
 }
 
 1;
