@@ -18,7 +18,8 @@ sub startup {
     push @{$self->plugins->namespaces}, 'Pb::IPUB::Plugin';
 
     my $config = $self->plugin('Config', { file => 'config.conf' });
-   
+    $ENV{DBI_DATABASE} = 'ipublish';
+
     $self->plugin('page_navigator', {
         'wrap_tag' => 'li',
         'prefix' => '<ul>',

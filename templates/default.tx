@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html> 
+<head> 
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
+<title><: $title ? $title ~ '-' : '' :>互众广告管理平台</title> 
+<link type="text/css" rel="stylesheet" href="/css/smoothness/jquery-ui-1.9.1.custom.min.css" />
+<link type="text/css" rel="stylesheet" href="/bootstrap/css/bootstrap.min.css" />
+<link type="text/css" rel="stylesheet" href="/bootstrap/css/bootstrap-responsive.min.css" />
+<link rel="stylesheet" href="/codemirror/lib/codemirror.css"/>
+<link href="/codemirror/mode/tiki/tiki.css" rel="stylesheet" type="text/css"/>
+<link type="text/css" rel="stylesheet" href="/css/main.css?v=0118" />
+: if $custom_css {
+<style><: $custom_css :></style>
+: }
+<script type="text/javascript" src="/js/jquery-1.8.2.min.js"></script> 
+<script type="text/javascript" src="/js/jquery-ui-1.9.1.custom.min.js"></script> 
+<script src="/codemirror/lib/codemirror.js"></script>
+<script src="/codemirror/mode/javascript/javascript.js"></script>
+<script src="/codemirror/keymap/vim.js"></script>
+<script src="/codemirror/mode/xml/xml.js"></script>
+<script src="/codemirror/mode/htmlmixed/htmlmixed.js"></script>
+<script src="/codemirror/mode/tiki/tiki.js"></script>
+<script src="/codemirror/mode/css/css.js"></script>
+<script src="/js/json2.js"></script>
+<script src="/js/swfobject.js"></script>
+</head> 
+<body>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container">
+          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </a>
+          <a class="brand" href="/">互众广告管理平台</a>
+            
+        : if $c.is_user_authenticated {
+          <div class="nav-collapse collapse">
+            <ul class="nav">
+                <li <: $menu == 'slot' ? raw('class="active"') : '' :> class="dropdown">
+                    <a href="/slot" class="dropdown-toggle" data-toggle="dropdown">广告位管理 <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="/slot">广告位列表</a></li>
+                        <li><a href="/slot/edit">新建广告位</a></li>
+                        <li class="divider"></li>
+                        <li class="nav-header">展示规则管理</li>
+                        <li><a href="/rule">展示规则列表</a></li>
+                        <li><a href="/rule/edit">新建展示规则</a></li>
+                    </ul>
+                </li>
+
+                <li <: $menu == 'ad' ? raw('class="active"') : '' :> class="dropdown">
+                    <a href="/ad" class="dropdown-toggle" data-toggle="dropdown">投放管理 <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="/ad">投放列表</a></li>
+                        <li><a href="/ad/edit">新建投放</a></li>
+                        <li class="divider"></li>
+                        <li class="nav-header">订单管理</li>
+                        <li><a href="/order">订单列表</a></li>
+                        <li><a href="/order/edit">新建订单</a></li>
+                        <li class="divider"></li>
+                        <li class="nav-header">联盟管理</li>
+                        <li><a href="/alliance">联盟列表</a></li>
+                        <li><a href="/alliance/edit">新建联盟</a></li>
+                    </ul>
+                </li>
+                <li <: $menu == 'material' ? raw('class="active"') : '' :>><a href="/material" >物料管理</a></li>
+                <li <: $menu == 'group' ? raw('class="active"') : '' :> class="dropdown">
+                    <a href="/group" class="dropdown-toggle" data-toggle="dropdown">分组管理 <b class="caret"></b></a>
+
+                    <ul class="dropdown-menu">
+                        <li><a href="/group?type=slot">媒体</a></li>
+                        <li><a href="/group?type=ad">投放分组</a></li>
+                        <li><a href="/group?type=material">物料分组</a></li>
+                        <li><a href="/group?type=pv">流量组</a></li>
+                    </ul>
+                </li>
+
+                <li <: smart_match($menu, ['user', 'publisher', 'advertiser']) ? raw('class="active"') : '' :> class="dropdown">
+                    <a href="/user" class="dropdown-toggle" data-toggle="dropdown">用户管理<b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                        : if $c.has_permission('publisher') {
+                        <li><a href="/publisher">发布商管理</a></li>
+                        : }
+                        : if $c.has_permission('advertiser') {
+                        <li><a href="/advertiser/agent">广告主管理</a></li>
+                        : }
+                        : if $c.has_permission('user') {
+                        <li class="divider"></li>
+                        <li><a href="/user">系统用户管理</a></li>
+                        : }
+                    </ul>
+                </li>
+<!--
+                <li <: smart_match($menu, 'platform') ? raw('class="active"') : '' :> class="dropdown">
+                    <a href="/platform" class="dropdown-toggle" data-toggle="dropdown">平台管理<b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="/platform/window">黑幕</a></li>
+                        <li><a href="/platform/box">300x250</a></li>
+                    </ul>
+                </li>
+            -->
+
+                <li <: $menu == 'tool' ? raw('class="active"') : '' :> class="dropdown">
+                    <a href="/tool" class="dropdown-toggle" data-toggle="dropdown" >工具 <b class="caret"></b></a>
+                    
+                    <ul class="dropdown-menu">
+                        <li><a href="/tool/click_url">点击链接生成工具</a></li>
+                        <li><a href="/tool/encode">JSSDK加密工具</a></li>
+                        <li><a href="/tool/taobao">淘宝链接数据采集</a></li>
+                        <li><a href="/tool/engine">引擎工具</a></li>
+                    </ul>
+                </li>
+
+
+            </ul>
+
+            <ul class="nav pull-right">
+                <li><a href="/me" style="font-size:15px;color:#fff"><: $c.current_user.name :></a></li>
+                <li class="divider-vertical"/>
+                <li><a href="/logout">退出</a></li>
+            </ul>
+          </div><!--/.nav-collapse -->
+        : }
+        </div>
+      </div>
+    </div> 
+
+    <div class="container">
+    : block content -> {}
+    </div>
+
+   <div id="popup-msg" class="alert" style="display:none">
+   </div>
+
+    : block modal -> {}
+
+    <script src="/js/common.js?v=0422"></script>
+
+    : if $__msg && $__msg.msg {
+    <script>
+    $(function(){
+        popup_msg(<: $__msg.msg | jsstr :>, <: $__msg.type | jsstr :>);
+    });
+    </script>
+    : }
+
+    <script src="/bootstrap/js/bootstrap.min.js"></script>
+
+    </body>
+</html>

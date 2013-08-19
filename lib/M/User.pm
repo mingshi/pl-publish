@@ -9,6 +9,9 @@ use strict;
 use warnings;
 use utf8;
 
+has database => 'ipublish';
+has table => 'user';
+
 sub password_hash {
     my ($self, $password, $signKey) = @_;
 
