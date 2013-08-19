@@ -4,6 +4,7 @@ use MY::Controller;
 use Text::Xslate::Util qw/mark_raw/;
 use Mojo::Util qw/url_escape camelize md5_sum encode/;
 use Mojo::JSON;
+use M::User;
 use JSON::XS;
 use MY::Utils;
 use utf8;
@@ -19,6 +20,9 @@ sub startup {
 
     my $config = $self->plugin('Config', { file => 'config.conf' });
     $ENV{DBI_DATABASE} = 'ipublish';
+    $ENV{DBI_USER} = 'root';
+    $ENV{DBI_PASSWORD} = '';
+    $ENV{DBI_HOST} = '127.0.0.1';
 
     $self->plugin('page_navigator', {
         'wrap_tag' => 'li',
@@ -61,14 +65,14 @@ sub startup {
         'load_user' => sub {
             my ($self, $uid) = @_;
 
-            my $user = M('user')->get_user_info($uid, $self->config->{userinfo_key}, $self->config->{userinfo_sign}, $self->config->{userinfo_url});
+            my $user = M::User::get_user_info($uid, $self->config->{userinfo_key}, $self->config->{userinfo_sign}, $self->config->{userinfo_url});
             return $user;
         },
         'validate_user' => sub {
             my ($self, $username, $password, $msg) = @_;
-            my $login = M('user')->login($username, $password, $self->config->{login_key}, $self->config->{sign_key}, $self->config->{auth_url});
-            
-            if ($login->{status} == "err") {
+            my $login = M::User::login($username, $password, $self->config->{login_key}, $self->config->{sign_key}, $self->config->{auth_url});
+          
+            if ($login->{status} eq "err") {
                 $msg->{data} = $login->{msg};
                 return 0;
             }
