@@ -61,7 +61,7 @@ sub startup {
     });
 
     $self->plugin('authentication' => {
-        'session_key' => 'ipublishUser',
+        'session_key' => $self->config->{login_session_key},
         'load_user' => sub {
             my ($self, $uid) = @_;
 

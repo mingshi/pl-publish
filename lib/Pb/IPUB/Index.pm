@@ -4,7 +4,8 @@ use utf8;
 
 sub index {
     my $self = shift;
-    $self->render_text('welcome');
+    $self->redirect_to('/mypub');
+    return;
 }
 
 1;
