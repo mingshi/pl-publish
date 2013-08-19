@@ -1,0 +1,41 @@
+: cascade layouts::default
+: around content -> {
+<div class="well" style="margin-top:60px;">
+    <form class="form-horizontal">
+        <fieldset>
+            <legend>添加主机</legend>
+            <div class="control-group">
+                <label class="control-label" for="name">名称:</label>
+                <div class="controls">
+                    <input type="text" id="name" name="name" /><span> 站点名称，例如:pic或者51juu</span>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label" for="server_address">主机地址:</label>
+                <div class="controls">
+                    <textarea id="server_address" name="server_address"></textarea><span> 主机地址，每行一个</span>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label" for="repo_address">仓库地址:</label>
+                <div class="controls">
+                    <input type="text" id="repo_address" name="repo_address" /><span> git仓库地址</span>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <div class="controls">
+                    <button type="button" id="ok" class="btn btn-primary">添加</button>
+                </div>
+            </div>
+        </fieldset>
+    </form>
+</div>
+
+
+
+
+
+: }

@@ -39,15 +39,18 @@
         : if $c.is_user_authenticated {
           <div class="nav-collapse collapse">
             <ul class="nav">
-                <li <: $menu == 'list' ? raw('class="active"') : '' :>>
-                    <a href="/list">发布列表</a>
+                <li <: $menu == 'mypub' ? raw('class="active"') : '' :>>
+                    <a href="/mypub">发布列表</a>
                 </li>
                 <li <: $menu == 'add' ? raw('class="active"') : '' :>>
-                    <a href="/add">创建发布</a>
+                    <a href="/mypub/add">创建发布</a>
                 </li>
                 : if $c.current_user.info.is_admin == 1 {
-                        <li <: $menu == 'manage' ? raw('class="active"') : '' :>>
-                            <a href="/manage">管理</a>
+                        <li <: $menu == 'manage' ? raw('class="active"') : '' :> class="dropdown">
+                            <a class="dropdown-toggle" data-toggle="dropdown" style="cursor:pointer;">管理<b class="caret"></b></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="/manage/add_server">添加主机</a></li>
+                            </ul>
                         </li>
                 : }
 

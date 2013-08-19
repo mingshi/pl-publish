@@ -10,4 +10,11 @@ sub index {
     $self->render('mypub_list');
     return;
 }
+
+sub add {
+    my $self = shift;
+    $self->render("add");
+    return;
+}
+
 1;
