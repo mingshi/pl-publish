@@ -1,3 +1,27 @@
 : cascade layouts::default
 : around content -> {
+    <div style="margin-top:60px;" class="well"> 
+        <table class="table table-bordered table-striped">
+            <thead>
+                <th>名称</th>
+                <th>主机地址</th>
+                <th>仓库地址</th>
+                <th>操作</th>
+            </thead>
+            <tbody>
+                : for $list_data -> $server {
+                    <tr>
+                        <td><: $server.name :></td>
+                        <td><: $server.server_address :></td>
+                        <td><: $server.repo_address :></td>
+                        <td>
+                            <a class="btn btn-mini btn-primary"><i class="icon-file"></i>详情</a>
+                            <a class="btn btn-mini btn-warning"><i class="icon-forward"></i>上线</a>
+                            <a class="btn btn-mini btn-inverse"><i class="icon-backward"></i>回退</a>
+                        </td>
+                    </tr>
+                : }
+            </tbody>
+        </table>
+    </div>
 :}

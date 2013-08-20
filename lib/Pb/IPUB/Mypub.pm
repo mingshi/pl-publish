@@ -7,13 +7,14 @@ use Data::Dumper;
 
 sub index {
     my $self = shift;
+    my $uid = $self->current_user->{info}{id};
+    my $where = {};
+    $where->{-bool} = "find_in_set('$uid', who)";
+    my $attrs = {
+        'order_by'  =>  '-id',  
+    };
+    $self->set_list_data('server', $where, $attrs);
     $self->render('mypub_list');
-    return;
-}
-
-sub add {
-    my $self = shift;
-    $self->render("add");
     return;
 }
 
