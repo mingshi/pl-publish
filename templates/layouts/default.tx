@@ -42,9 +42,6 @@
                 <li <: $menu == 'mypub' ? raw('class="active"') : '' :>>
                     <a href="/mypub">发布列表</a>
                 </li>
-                <li <: $menu == 'add' ? raw('class="active"') : '' :>>
-                    <a href="/mypub/add">创建发布</a>
-                </li>
                 : if $c.current_user.info.is_admin == 1 {
                         <li <: $menu == 'manage' ? raw('class="active"') : '' :> class="dropdown">
                             <a class="dropdown-toggle" data-toggle="dropdown" style="cursor:pointer;">管理<b class="caret"></b></a>

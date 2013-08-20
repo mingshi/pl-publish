@@ -11,28 +11,41 @@ use Data::Dumper;
 
 sub add_server {
     my $self = shift;
+    my $where = {};
+    my $attrs = {
+        'order_by'  => '-uid',
+    };
+    $self->set_list_data('user', $where, $attrs);
     $self->render('manage/add_server');
     return;
 }
 
 sub save_server {
     my $self = shift;
-   
+  
     if ($self->req->method eq 'POST') {
         my %params = $self->param_request({
             name => 'STRING',
             server_address => 'STRING',
-            repo_address => 'STRING'
+            repo_address => 'STRING',
         });
 
         unless ($params{name} && $params{server_address} && $params{repo_address}) {
             return $self->fail('请填写完整', go => '/manage/add_server');
         }
 
+        my @tmpServer = split(/\r?\n/, $params{server_address});
+        my $currentServer = join(',', @tmpServer);
+        my $who = join(',', $self->param('who'));
+       
+        if ($who eq '') {
+            $who = 0;
+        } 
         my $ins = $self->validation_data;
         $ins->{name} = $params{name};
-        $ins->{server_address} = $params{server_address};
+        $ins->{server_address} = $currentServer;
         $ins->{repo_address} = $params{repo_address};
+        $ins->{who} = $who;
         my $m = R('server');
         my $server = $m->insert($ins);
         my $msg = '添加成功';

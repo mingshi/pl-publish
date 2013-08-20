@@ -24,7 +24,16 @@
                     <input type="text" id="repo_address" name="repo_address" /><span> git仓库地址</span>
                 </div>
             </div>
-
+            
+            <div class="control-group">
+                <label class="control-label" for="who">分配用户:</label>
+                <div class="controls">
+                    : for $list_data -> $user {
+                        <input type="checkbox" name="who" value="<: $user.uid :>" /><span> <: $user.realname :></span>
+                    : }
+                </div>
+            </div>
+            
             <div class="control-group">
                 <div class="controls">
                     <button type="submit" id="ok" class="btn btn-primary">添加</button>
