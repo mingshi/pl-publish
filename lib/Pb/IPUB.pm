@@ -263,6 +263,9 @@ sub startup {
                 return;
             }
 
+            if ($controller ~~ /^manage$/ && $self->current_user->{info}{is_admin} != 1) {
+                return 0;
+            }
         }
 
         if ($path ~~ m{^/login}) {

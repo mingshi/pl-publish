@@ -49,8 +49,8 @@ sub save_server {
         my $m = R('server');
         my $server = $m->insert($ins);
         my $msg = '添加成功';
-        my $go = '/';
-        $self->succ($msg);
+        my $go = '/manage/server_list';
+        $self->succ($msg, go => $go);
         return;
     }
 
