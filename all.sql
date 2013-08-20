@@ -16,3 +16,6 @@ create table user (
     PRIMARY KEY (`id`),
     UNIQUE KEY `uid` (`uid`)
 ) engine=innodb default charset utf8;
+
+alter table server add server_root varchar(255) not null default '/tmp/' comment '主机目录';
+alter table server add status tinyint(1) not null default '1' comment '主机状态，1:正常，0:删除';

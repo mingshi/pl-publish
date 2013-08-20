@@ -4,11 +4,13 @@ use MY::Controller;
 use Text::Xslate::Util qw/mark_raw/;
 use Mojo::Util qw/url_escape camelize md5_sum encode/;
 use Mojo::JSON;
-use Pb::IPUB::Manage;
 use M::User;
 use JSON::XS;
 use MY::Utils;
 use utf8;
+
+$M::User::SERVER_STATUS_OK = 1;
+$M::User::SERVER_STATUS_DELETE = 0;
 
 sub startup {
     my $self = shift;

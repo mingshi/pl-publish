@@ -9,7 +9,8 @@ use strict;
 use warnings;
 use utf8;
 
-
+our $SERVER_STATUS_OK;
+our $SERVER_STATUS_DELETE;
 
 has table => 'user';
 

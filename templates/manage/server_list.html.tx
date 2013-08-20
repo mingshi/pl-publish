@@ -7,6 +7,8 @@
                     <th>名称</th>
                     <th>主机地址</th>
                     <th>仓库地址</th>
+                    <th>目录地址</th>
+                    <th>状态</th>
                     <th>操作</th>
                 </tr>
             </thead>
@@ -16,9 +18,17 @@
                         <td><: $server.name :></td>
                         <td><: $server.server_address :></td>
                         <td><: $server.repo_address :></td>
+                        <td><: $server.server_root :></td>
+                        <td>
+                            : if ($server.status == $serverStatus.status_ok) {
+                                <span class="label label-success">正常</span>
+                            : } else {
+                                <span class="label label-warning">停用</span>
+                            : }
+                        </td>
                         <td>
                             <a class="btn btn-mini btn-info"><i class="icon-edit"></i>编辑</a>
-                            <a class="btn btn-mini btn-danger"><i class="icon-warning-sign"></i>删除</a>
+                            <a class="btn btn-mini btn-danger" href="/manage/del_server?id=<: $server.id :>" onclick="javascript:return confirm('真心要删除?!');"><i class="icon-warning-sign"></i>删除</a>
                         </td>
                     </tr>
                 : }

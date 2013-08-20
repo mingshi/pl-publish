@@ -28,9 +28,10 @@ sub save_server {
             name => 'STRING',
             server_address => 'STRING',
             repo_address => 'STRING',
+            server_root =>  'STRING',
         });
 
-        unless ($params{name} && $params{server_address} && $params{repo_address}) {
+        unless ($params{name} && $params{server_address} && $params{repo_address} && $params{server_root}) {
             return $self->fail('请填写完整', go => '/manage/add_server');
         }
 
@@ -45,6 +46,7 @@ sub save_server {
         $ins->{name} = $params{name};
         $ins->{server_address} = $currentServer;
         $ins->{repo_address} = $params{repo_address};
+        $ins->{server_root} = $params{server_root};
         $ins->{who} = $who;
         my $m = R('server');
         my $server = $m->insert($ins);
@@ -75,9 +77,36 @@ sub server_list {
         'rows_per_page' =>  $pagesize,
     };
 
+    my $serverStatus = {
+        status_ok => $M::User::SERVER_STATUS_OK,
+        status_del => $M::User::SERVER_STATUS_DELETE,
+    };
+    my %data = (
+        serverStatus => $serverStatus,
+    );
     $self->set_list_data('server', $where, $attrs);
 
-    $self->render('/manage/server_list');
+    $self->render('/manage/server_list', %data);
+}
+
+sub del_server {
+    my $self = shift;
+    my %params = $self->param_request({
+        id  =>  'UINT',
+    });
+
+    my $server = M('server')->find({ id => $params{id} });
+
+    if (!$server) {
+        my $msg = '主机不存在';
+        $self->fail($msg);
+        return $self->redirect_to('/manage/server_list');;
+    } else {
+        $server->update({ status => $M::User::SERVER_STATUS_DELETE });
+        my $msg = '删除成功';
+        $self->succ($msg);
+        return $self->redirect_to('/manage/server_list');
+    }
 }
 
 1;

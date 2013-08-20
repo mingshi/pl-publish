@@ -6,6 +6,8 @@
                 <th>名称</th>
                 <th>主机地址</th>
                 <th>仓库地址</th>
+                <th>目录地址</th>
+                <th>状态</th>
                 <th>操作</th>
             </thead>
             <tbody>
@@ -14,6 +16,14 @@
                         <td><: $server.name :></td>
                         <td><: $server.server_address :></td>
                         <td><: $server.repo_address :></td>
+                        <td><: $server.server_root :></td>
+                        <td>
+                            : if ($server.status == $serverStatus.status_ok) {
+                                <span class="label label-success">正常</span>
+                            : } else {
+                                <span class="label label-warning">停用</span>
+                            : }
+                        </td>
                         <td>
                             <a class="btn btn-mini btn-primary"><i class="icon-file"></i>详情</a>
                             <a class="btn btn-mini btn-warning"><i class="icon-forward"></i>上线</a>

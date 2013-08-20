@@ -26,6 +26,13 @@
             </div>
             
             <div class="control-group">
+                <label class="control-label" for="server_root">目录地址:</label>
+                <div class="controls">
+                    <input type="text" id="server_root" name="server_root" /><span> 主机在服务器上的绝对目录</span>
+                </div>
+            </div>
+
+            <div class="control-group">
                 <label class="control-label" for="who">分配用户:</label>
                 <div class="controls">
                     : for $list_data -> $user {
