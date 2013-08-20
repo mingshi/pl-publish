@@ -25,7 +25,7 @@ sub save_server {
             repo_address => 'STRING'
         });
 
-        unless ($params{name} || $params{server_address} || $params{repo_address}) {
+        unless ($params{name} && $params{server_address} && $params{repo_address}) {
             return $self->fail('请填写完整', go => '/manage/add_server');
         }
 
@@ -44,4 +44,27 @@ sub save_server {
     $self->render('manage/add_server');
     return;
 }
+
+sub server_list {
+    my $self = shift;
+    my %params = $self->param_request({
+        page => 'UINT',
+        pagesize => 'UINT',
+    });
+
+    my $page = $params{page} || 1;
+    my $pagesize = $params{pagesize} || 15;
+    my $servers = R('server');
+    my $where = {};
+    my $attrs = {
+        'order_by' => '-id',
+        'page'  =>  $page,
+        'rows_per_page' =>  $pagesize,
+    };
+
+    $self->set_list_data('server', $where, $attrs);
+
+    $self->render('/manage/server_list');
+}
+
 1;

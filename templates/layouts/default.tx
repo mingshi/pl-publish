@@ -49,6 +49,7 @@
                         <li <: $menu == 'manage' ? raw('class="active"') : '' :> class="dropdown">
                             <a class="dropdown-toggle" data-toggle="dropdown" style="cursor:pointer;">管理<b class="caret"></b></a>
                             <ul class="dropdown-menu">
+                                <li><a href="/manage/server_list">主机列表</a></li>
                                 <li><a href="/manage/add_server">添加主机</a></li>
                             </ul>
                         </li>
