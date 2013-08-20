@@ -4,6 +4,7 @@ use MY::Controller;
 use Text::Xslate::Util qw/mark_raw/;
 use Mojo::Util qw/url_escape camelize md5_sum encode/;
 use Mojo::JSON;
+use Pb::IPUB::Manage;
 use M::User;
 use JSON::XS;
 use MY::Utils;
@@ -33,6 +34,145 @@ sub startup {
         'class' => '',
         'current_class' => 'active',
         'disabled_class' => 'disabled',
+    });
+
+    $self->plugin('form_validation', {
+        global_filter_names => ['trim'],
+        checks => {
+            exists_row => sub {
+                my ($table, $pk) = @_;
+                my $database;
+                $pk //= 'id';
+
+                ($database, $table) = $table =~ /^(?:(\w+)\.)?(\w+)$/;
+
+                return sub {
+                    return if $_[0] ~~ [undef, ''];
+
+                    my $count = M($table, $database)->select_count({
+                        $pk => $_[0],
+                    });
+
+                    if ($count <= 0) {
+                        return "{$_[2]}不存在";
+                    }
+
+                    return undef;
+                }; 
+            },
+
+            exists_rows => sub {
+                my ($table, $pk) = @_;
+                my $database;
+                $pk //= 'id';
+
+                ($database, $table) = $table =~ /^(?:(\w+)\.)?(\w+)$/;
+
+                return sub {
+                    return if $_[0] ~~ [undef, ''];
+
+                    my @ids = split /,/, $_[0];
+
+                    my $count = M($table, $database)->select_count({
+                        $pk => \@ids,
+                    });
+
+                    if ($count < scalar(@ids)) {
+                        return "{$_[2]}不存在";
+                    }
+
+                    return undef;
+                };
+
+            },
+
+            uniq_row => sub {
+                my ($table, $col, $pk) = @_;
+                my $database;
+                $pk //= 'id';
+
+                ($database, $table) = $table =~ /^(?:(\w+)\.)?(\w+)$/;
+
+                return sub {
+                    return if $_[0] ~~ [undef, ''];
+
+                    $col //= $_[2];
+
+                    my $where = {
+                        $col => $_[0],
+                    };
+
+                    if ($_[1]->{$pk}) {
+                        $where->{$pk} = { '!=' => $_[1]->{$pk} };
+                    }
+
+                    if (M($table, $database)->select_count($where) > 0) {
+
+                        return "{$_[2]}已存在";
+                    }
+
+                    return undef;
+                };
+            },
+
+            valid_filter => sub {
+                return if $_[0] ~~ [undef, ''];
+
+                my $content = $_[0];
+
+                my $json = my_decode_json($content);
+
+                if ($json->{filter}) {
+                    my $err_msg;
+
+                    unless ($self->check_filter_syntax($json->{filter}, $err_msg)) {
+                        return $err_msg;
+                    }
+                }
+
+                if ($json->{ext_filter}) {
+                    my $err_msg;
+
+                    unless ($self->check_filter_syntax($json->{ext_filter}, $err_msg)) {
+                        return $err_msg;
+                    }
+                }
+
+                if ($json->{rw_filter}) {
+                    my $err_msg;
+
+                    unless ($self->check_filter_syntax($json->{rw_filter}, $err_msg)) {
+                        return $err_msg;
+                    }
+                }
+                return undef;
+            },
+
+            valid_cond => sub {
+                return if $_[0] ~~ [undef, ''];
+
+                my $content = $_[0];
+
+                my $json = my_decode_json($content);
+
+                if ($json->{_cond}) {
+                    my $err_msg;
+
+                    unless (ref $json->{_cond} ~~ 'ARRAY') {
+
+                        return '定向自定义配置语法错误，_cond 字段必须是一个数组';
+                    }
+
+                    push @{$json->{_cond}}, [ "result", "=", "1" ];
+
+                    unless ($self->check_filter_syntax($json->{_cond}, $err_msg)) {
+                        return $err_msg;
+                    }
+                }
+
+                return undef;
+            }
+        },
     });
 
     $self->plugin(xslate_renderer => {

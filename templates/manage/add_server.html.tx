@@ -1,7 +1,7 @@
 : cascade layouts::default
 : around content -> {
 <div class="well" style="margin-top:60px;">
-    <form class="form-horizontal">
+    <form id="server_form" class="ajax form-horizontal" method="post" action="/manage/save_server">
         <fieldset>
             <legend>添加主机</legend>
             <div class="control-group">
@@ -27,14 +27,12 @@
 
             <div class="control-group">
                 <div class="controls">
-                    <button type="button" id="ok" class="btn btn-primary">添加</button>
+                    <button type="submit" id="ok" class="btn btn-primary">添加</button>
                 </div>
             </div>
         </fieldset>
     </form>
 </div>
-
-
 
 
 
