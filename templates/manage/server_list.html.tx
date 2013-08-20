@@ -27,8 +27,12 @@
                             : }
                         </td>
                         <td>
-                            <a class="btn btn-mini btn-info"><i class="icon-edit"></i>编辑</a>
+                            <a class="btn btn-mini btn-info" href="/manage/edit_server?id=<: $server.id :>"><i class="icon-edit"></i>编辑</a>
+                            : if ($server.status == $serverStatus.status_ok) {
                             <a class="btn btn-mini btn-danger" href="/manage/del_server?id=<: $server.id :>" onclick="javascript:return confirm('真心要删除?!');"><i class="icon-warning-sign"></i>删除</a>
+                            : } else {
+                            <a class="btn btn-mini btn-primary" href="/manage/restore_server?id=<: $server.id :>" onclick="javascript:return confirm('真心要恢复?!');"><i class="icon-warning-sign"></i>恢复</a> 
+                            : }
                         </td>
                     </tr>
                 : }

@@ -100,12 +100,52 @@ sub del_server {
     if (!$server) {
         my $msg = '主机不存在';
         $self->fail($msg);
-        return $self->redirect_to('/manage/server_list');;
+        return $self->redirect_to('/manage/server_list');
     } else {
         $server->update({ status => $M::User::SERVER_STATUS_DELETE });
         my $msg = '删除成功';
         $self->succ($msg);
         return $self->redirect_to('/manage/server_list');
+    }
+}
+
+sub restore_server {
+    my $self = shift;
+    my %params = $self->param_request({
+        id => 'UINT',
+    });
+
+    my $server = M('server')->find({ id => $params{id} });
+
+    if (!$server) {
+        my $msg = '主机不存在';
+        $self->fail($msg);
+        return $self->redirect_to('/manage/server_list');
+    } else {
+        $server->update({ status => $M::User::SERVER_STATUS_OK });
+        my $msg = '恢复成功';
+        $self->succ($msg);
+        return $self->redirect_to('/manage/server_list');
+    }
+}
+
+sub edit_server {
+    my $self = shift;
+    my %params = $self->param_request({
+        id  =>  'UINT',
+    });
+
+    my $server = M('server')->find({ id => $params{id} });
+    if (!$server) {
+        my $msg = '主机不存在';
+        $self->fail($msg);
+        return $self->redirect_to('/manage/server_list');
+    } else {
+        my %data = (
+            detail  =>  $server->{data},
+        );
+        $self->render('/manage/edit_server', %data);
+        return;
     }
 }
 

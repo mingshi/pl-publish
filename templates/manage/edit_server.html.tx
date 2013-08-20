@@ -1,0 +1,7 @@
+: cascade layouts::default
+: around content -> {
+    <div class="well" style="margin-top:60px;">
+        <form id="server_form" class="ajax form-horizontal" method="post" action="">
+        </form>
+    </div>
+: }
