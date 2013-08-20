@@ -218,7 +218,25 @@ sub startup {
             }
 
             my $user_id = $login->{info}{id};
+            my $ip = $self->tx->remote_address;
 
+            my $myUser = M('user')->find({ uid => $user_id });
+            
+            if ($myUser) {
+               $myUser->update({
+                    login_time => \'current_timestamp',
+                    login_ip => $ip,
+                }); 
+            } else {
+                M('user')->insert({
+                    uid => $user_id,
+                    username => $login->{info}{username},
+                    realname => $login->{info}{realname},
+                    login_time => \'current_timestamp',
+                    login_ip => $ip,
+                });
+            }
+            
             return $user_id;
         },
     });

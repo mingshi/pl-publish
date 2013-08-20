@@ -9,6 +9,10 @@ use strict;
 use warnings;
 use utf8;
 
+
+
+has table => 'user';
+
 sub password_hash {
     my ($password, $signKey) = @_;
 
