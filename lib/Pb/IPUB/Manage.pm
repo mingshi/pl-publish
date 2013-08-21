@@ -193,10 +193,8 @@ sub edit_server {
         my $servers = join "\n", split(',', $server->{data}->{server_address});
         $server->{data}->{server_address} = $servers;
        
-        my $uids = "," . $server->{data}->{who} . ",";
         my %data = (
             detail  =>  $server->{data},
-            uids    =>  $uids,
             status_ok => $M::User::SERVER_STATUS_OK,
             status_del => $M::User::SERVER_STATUS_DELETE,
         );

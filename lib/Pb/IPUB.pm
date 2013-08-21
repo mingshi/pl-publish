@@ -3,6 +3,7 @@ use Mojo::Base 'Mojolicious';
 use MY::Controller;
 use Text::Xslate::Util qw/mark_raw/;
 use Mojo::Util qw/url_escape camelize md5_sum encode/;
+use Pb::IPUB::Mypub;
 use Mojo::JSON;
 use M::User;
 use JSON::XS;
@@ -193,7 +194,7 @@ sub startup {
                 },
                 hard_match => sub {
                     my $f = "," . shift . ",";
-                    my $s = shift;
+                    my $s = "," . shift . ",";
                     my $w = grep(/$f/, $s);
                     return $w;  
                 },

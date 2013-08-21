@@ -46,7 +46,7 @@
                     <label class="control-label" for="who">分配用户:</label>
                     <div class="controls">
                         : for $list_data -> $user {
-                            <input type="checkbox" name="who" value="<: $user.uid :>" <: if hard_match($user.uid, $uids) == 1 { :> checked <: } :>  /><span> <: $user.realname :></span>
+                            <input type="checkbox" name="who" value="<: $user.uid :>" <: if hard_match($user.uid, $detail.who) == 1 { :> checked <: } :>  /><span> <: $user.realname :></span>
                         : }
                     </div> 
                 </div>
