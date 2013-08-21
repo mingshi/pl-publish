@@ -131,6 +131,55 @@ sub restore_server {
 
 sub edit_server {
     my $self = shift;
+    if ($self->req->method eq 'POST') {
+        my %params = $self->param_request({
+            id  =>  'UINT',
+            name => 'STRING',
+            server_address => 'STRING',
+            repo_address => 'STRING',
+            server_root =>  'STRING',
+            status  =>  'UINT',
+        });
+
+        unless ($params{id})  {
+            return $self->fail('没有主机id', go => $self->req->url);
+        }
+
+        unless ($params{name} && $params{server_address} && $params{repo_address} && $params{server_root}) {
+            return $self->fail('请填写完整', go => $self->req->url);
+        }
+
+        my @tmpServer = split(/\r?\n/, $params{server_address});
+        my $currentServer = join(',', @tmpServer);
+        my $who = join(',', $self->param('who'));
+
+        if ($who eq '') {
+            $who = 0;
+        }
+
+        my $theServer = M('server')->find({ id => $params{id} });
+
+        if (!$theServer) {
+            my $msg_up = '主机不存在';
+            $self->fail($msg_up);
+            return $self->redirect_to('/manage/server_list');
+        } else {
+            my $upt = $self->validation_data;
+            $upt->{name} = $params{name};
+            $upt->{server_address} = $currentServer;
+            $upt->{repo_address} = $params{repo_address};
+            $upt->{server_root} = $params{server_root};
+            $upt->{who} = $who;
+            $upt->{status} = $params{status};
+
+            $theServer->update($upt);
+
+            my $msg_up = '修改成功';
+            $self->succ($msg_up);
+            return;
+        }     
+    }
+    
     my %params = $self->param_request({
         id  =>  'UINT',
     });
@@ -141,9 +190,23 @@ sub edit_server {
         $self->fail($msg);
         return $self->redirect_to('/manage/server_list');
     } else {
+        my $servers = join "\n", split(',', $server->{data}->{server_address});
+        $server->{data}->{server_address} = $servers;
+       
+        my $uids = "," . $server->{data}->{who} . ",";
         my %data = (
             detail  =>  $server->{data},
+            uids    =>  $uids,
+            status_ok => $M::User::SERVER_STATUS_OK,
+            status_del => $M::User::SERVER_STATUS_DELETE,
         );
+
+        my $where = {};
+        my $attrs = {
+            'order_by'  => '-uid',
+        };
+        $self->set_list_data('user', $where, $attrs);
+       
         $self->render('/manage/edit_server', %data);
         return;
     }

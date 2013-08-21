@@ -191,6 +191,12 @@ sub startup {
                 smart_match => sub {
                     return shift ~~ shift;
                 },
+                hard_match => sub {
+                    my $f = "," . shift . ",";
+                    my $s = shift;
+                    my $w = grep(/$f/, $s);
+                    return $w;  
+                },
                 fnum => \&fnum,
                 jsstr => sub {
                     return mark_raw(jsstr(shift));
