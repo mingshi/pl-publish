@@ -197,6 +197,14 @@ sub startup {
                     my $w = grep(/$f/, $s);
                     return $w;  
                 },
+                sweet_input => sub {
+                    my $str = shift;
+                    my $s = "";
+                    for my $address (split(',', $str)) {
+                        $s .= '<input type="checkbox" value="'.$address.'" name="server_address" />'.$address."\n";
+                    }
+                    return $s;
+                },
                 fnum => \&fnum,
                 jsstr => sub {
                     return mark_raw(jsstr(shift));

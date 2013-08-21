@@ -18,12 +18,17 @@ sub index {
         status_ok => $M::User::SERVER_STATUS_OK,
         status_del => $M::User::SERVER_STATUS_DELETE,
     };
+   
+    my $serverList = {};
+    $self->set_list_data('server', $where, $attrs);
+    for my $_data (@{$self->stash('list_data')}) {
+        @{$serverList->{$_data->{id}}} = split(',', $_data->{server_address});
+    }
     
     my %data = (
         serverStatus => $serverStatus,
+        serverList  =>  $serverList,
     );
-
-    $self->set_list_data('server', $where, $attrs);
     $self->render('mypub_list', %data);
     return;
 }

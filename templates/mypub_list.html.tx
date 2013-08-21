@@ -26,7 +26,54 @@
                         </td>
                         <td>
                             <a class="btn btn-mini btn-primary"><i class="icon-file"></i>详情</a>
-                            <a class="btn btn-mini btn-warning"><i class="icon-forward"></i>上线</a>
+                            <a href="#pull-<: $server.id :>" class="btn btn-mini btn-warning" data-toggle="modal" role="button"><i class="icon-forward"></i>上线</a>
+                            <!-- pull modal -->
+                            <div id="pull-<: $server.id :>" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                                    <h3>站点<span style="color:teal;"><: $server.name :></span>上线 ^_^</h3>
+                                </div>
+                                <div class="modal-body">
+                                    <form id="server_form" class="ajax form-horizontal" method="post" action="/mypub/pull">
+                                        <fieldset>
+                                            <div class="control-group">
+                                                <label class="control-label" for="name">名称:</label>
+                                                <div class="controls">
+                                                    <input type="text" id="name" name="name_pull" value="<: $server.name :>" readonly />
+                                                </div>
+                                            </div>
+
+                                            <div class="control-group">
+                                                <label class="control-label" for="server_address">主机地址:</label>
+                                                <div class="controls">
+                                                    : for $serverList[$server.id] -> $address {
+                                                        <input type="checkbox" name="server_address_pull" value="<: $address :>" checked /> <: $address :><br />
+                                                    : }
+                                                </div>
+                                            </div>
+
+                                            <div class="control-group">
+                                                <label class="control-label" for="repo_address">仓库地址:</label>
+                                                <div class="controls">
+                                                    <input type="text" id="repo_address" name="repo_address_pull" value="<: $server.repo_address :>" readonly />
+                                                </div>
+                                            </div>
+
+                                            <div class="control-group">
+                                                <label class="control-label" for="server_root">目录地址:</label>
+                                                <div class="controls">
+                                                    <input type="text" id="server_root" name="server_root_pull" value="<: $server.server_root :>" readonly />
+                                                </div>
+                                            </div>
+                                        </fieldset>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button>
+                                    <button class="btn btn-primary">确认上线</button>
+                                </div>
+                            </div> 
+                            
                             <a class="btn btn-mini btn-inverse"><i class="icon-backward"></i>回退</a>
                         </td>
                     </tr>
