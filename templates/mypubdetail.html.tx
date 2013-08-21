@@ -1,0 +1,31 @@
+: cascade layouts::default
+: around content -> {
+    <div style="margin-top:60px;" class="well">
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>用户id</th>
+                    <th>主机id</th>
+                    <th>类型</th>
+                    <th>时间</th>
+                    <th>返回</th>
+                </tr>
+            </thead>
+            <tbody>
+                : for $list_data -> $log {
+                    <tr>
+                        <td><: $log.uid :></td>
+                        <td><: $log.server_id :></td>
+                        <td><: $log.type :></td>
+                        <td><: $log.time :></td>
+                        <td><: $log.res :></td>
+                    </tr>
+                : }
+            </tbody>
+        </table>
+    </div>
+    <hr />
+    <div class="pagination">
+    <: $pagination | raw :>
+    </div>
+: }

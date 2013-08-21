@@ -19,3 +19,13 @@ create table user (
 
 alter table server add server_root varchar(255) not null default '/tmp/' comment '主机目录';
 alter table server add status tinyint(1) not null default '1' comment '主机状态，1:正常，0:删除';
+
+create table log (
+    `id` int not null auto_increment,
+    `uid` int not null default '0' comment '用户id',
+    `server_id` int not null default '0' comment '主机id',
+    `type` tinyint(1) not null default '0' comment '操作类型1:上线,2:回退',
+    `res` text,
+    `time` timestamp NULL DEFAULT NULL,
+    PRIMARY KEY (`id`)
+) engine=innodb default charset utf8;

@@ -70,6 +70,7 @@ sub do_pull {
     if ($self->req->method eq "POST") {
         my %params = $self->param_request({
             id  => 'UINT',
+            name => 'STRING',
             repo_address    =>  'STRING',
             server_root =>  'STRING',
         });
@@ -93,15 +94,74 @@ sub do_pull {
             }
       
             my $dir = $ENV{'PWD'};
-            my $res = `$dir/pull.sh $params{repo_address} $params{server_root} $pullServers`;
+            my $now = time();
+            my $file = $dir . "/dsh_group/" . $params{id} . "-" . $now;
+            
+            unless (open (MYFILE, ">:utf8", $file)) {
+                my $msg = '无法创建临时文件';
+                $self->fail($msg);
+                return;
+            }
+
+            print MYFILE join("\n", $self->param('server_address'));
+            close MYFILE;
+
+            my $res = `$dir/pull.sh $params{repo_address} $params{server_root} $file`;
             say $res;
-            $self->succ($res);
+            M('log')->insert({
+                uid => $uid,
+                server_id   =>  $params{id},
+                type    =>  '1',
+                res  =>  "$res",
+                time    =>  \'current_timestamp'
+            });
+            
+            $self->fail($res);
             return;
 
         }
     }
 }
 
+sub detail {
+    my $self = shift;
+    my %params = $self->param_request({
+        id  =>  'UINT',
+        page => 'UINT',
+        pagesize => 'UINT',
+    });
+    
+    my $page = $params{page} || 1;
+    my $pagesize = $params{pagesize} || 15;
+
+    my $where = {};
+    $where->{server_id} = $params{id};
+    my $attrs = {
+        'order_by' => '-id',
+        'page'  =>  $page,
+        'rows_per_page' =>  $pagesize,
+    };
+    
+    my $server = M('server')->find({ id => $params{id} });
+    if (!$server) {
+        my $msg = '主机不存在';
+        $self->fail($msg);
+        return;
+    }
+
+    my $uid = $self->current_user->{info}{id};
+
+    if (hard_matches($uid, $server->{data}->{who}) != 1) {
+        my $msg = '你对该主机没有权限';
+        $self->fail($msg);
+        return;
+    }
+
+    $self->set_list_data('log', $where, $attrs);
+
+    $self->render('mypubdetail');
+
+}
 
 
 sub hard_matches {

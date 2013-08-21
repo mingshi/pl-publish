@@ -1,6 +1,8 @@
 #!/bin/bash
-echo $1;
-echo "\n";
-echo $2;
-echo "\n";
-echo $3;
+dsh -g $3 -M -c '
+    if [ ! -d $2 ];then
+        mkdir $2;
+    fi
+    cd $2;
+    git pull
+'
