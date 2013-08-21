@@ -86,13 +86,17 @@ sub do_pull {
             $self->fail($msg);
             return $self->redirect_to('/mypub');
         } else {
-            my $uid = $self->current_user->{data}->{info}{id};
-            if (hard_matches($uid, $tmpServer->{data}->{who})) {
+            my $uid = $self->current_user->{info}{id};
+            if (hard_matches($uid, $tmpServer->{data}->{who}) != 1) {
                 my $msg = '你对该主机没有权限';
-                $self->fail($msg);
-                return $self->redirect_to('/mypub');
+                return $self->fail($msg);
             }
-           
+      
+            my $dir = $ENV{'PWD'};
+            my $res = `$dir/pull.sh $params{repo_address} $params{server_root} $pullServers`;
+            say $res;
+            $self->succ($res);
+            return;
 
         }
     }
