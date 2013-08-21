@@ -15,13 +15,13 @@ sub index {
     my $attrs = {
         'order_by'  =>  '-id',  
     };
+   
+    $self->set_list_data('server', $where, $attrs);
+
     my $serverStatus = {
         status_ok => $M::User::SERVER_STATUS_OK,
         status_del => $M::User::SERVER_STATUS_DELETE,
-    };
-   
-    $self->set_list_data('server', $where, $attrs);
-    
+    };    
     my %data = (
         serverStatus => $serverStatus,
     );
@@ -49,10 +49,15 @@ sub pull {
             return $self->redirect_to('/mypub');
         }
 
+        my $serverStatus = {
+            status_ok => $M::User::SERVER_STATUS_OK,
+            status_del => $M::User::SERVER_STATUS_DELETE,
+        };
         my @serverList = split(',', $server->{data}->{server_address});
         my %data = (
             server  =>  $server->{data},
             serverList  =>  \@serverList,
+            serverStatus => $serverStatus,
         );
 
         $self->render('pull', %data);
