@@ -8,7 +8,7 @@
                 <th>仓库地址</th>
                 <th>目录地址</th>
                 <th>状态</th>
-                <th style="width:160px">操作</th>
+                <th style="width:200px">操作</th>
             </thead>
             <tbody>
                 : for $list_data -> $server {
