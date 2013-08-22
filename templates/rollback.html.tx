@@ -1,0 +1,64 @@
+: cascade layouts::default
+: around content -> {
+    <div style="margin-top:60px;" class="well">
+        <form id="server_form_<: $server.id :>" class="ajax form-horizontal" method="post" action="/mypub/do_rollback">
+            <fieldset>
+                <legend><h3>站点<code><: $server.name :></code>回退 凸^-^凸</h3></legend>
+                <div class="control-group">
+                    <label class="control-label" for="name">名称:</label>
+                    <div class="controls">
+                        <input type="text" id="name" name="name" value="<: $server.name :>" readonly />
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label" for="server_address">主机地址:</label>
+                    <div class="controls">
+                        : for $serverList -> $address {
+                            <input type="checkbox" name="server_address" value="<: $address :>" checked /> <: $address :><br />
+                        : }
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label" for="repo_address">仓库地址:</label>
+                    <div class="controls">
+                        <input type="text" id="repo_address" name="repo_address" value="<: $server.repo_address :>" readonly />
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label" for="server_root">目录地址:</label>
+                    <div class="controls">
+                        <input type="text" id="server_root" name="server_root" value="<: $server.server_root :>" readonly />
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label" for="status">状态:</label>
+                    <div class="controls">
+                        : if ($server.status == $serverStatus.status_ok) {
+                            <span class="label label-success">正常</span>
+                        : } else {
+                            <span class="label label-warning">停用</span>
+                        : }
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label" for="commit">提交:</label>
+                    <div class="controls">
+                        <input type="text" name="commit" /><span> 提交的唯一标示码 例如：3085411011232e164e7e1bfcdd5e64cb892c0b37 默认为上一次提交</span>
+                    </div>
+                </div>
+                
+                <div class="control-group"> 
+                    <div class="controls">
+                        <input type="hidden" name="id" value="<: $server.id :>" />
+                        <button class="btn btn-primary">确认回退</button>
+                    </div>
+                </div>
+            </fieldset>
+        </form>
+    </div>
+: }

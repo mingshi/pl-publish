@@ -8,7 +8,7 @@
                 <th>仓库地址</th>
                 <th>目录地址</th>
                 <th>状态</th>
-                <th>操作</th>
+                <th style="width:160px">操作</th>
             </thead>
             <tbody>
                 : for $list_data -> $server {
@@ -28,7 +28,7 @@
                             <a href="/mypub/detail?id=<: $server.id :>" class="btn btn-mini btn-primary"><i class="icon-file"></i>详情</a>
                             <a href="/mypub/pull?id=<: $server.id :>" class="btn btn-mini btn-warning"><i class="icon-forward"></i>上线</a>
                             
-                            <a class="btn btn-mini btn-inverse"><i class="icon-backward"></i>回退</a>
+                            <a href="/mypub/rollback?id=<: $server.id :>" class="btn btn-mini btn-inverse"><i class="icon-backward"></i>回退</a>
                         </td>
                     </tr>
                 : }

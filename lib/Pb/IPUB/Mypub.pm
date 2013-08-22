@@ -29,6 +29,44 @@ sub index {
     return;
 }
 
+sub rollback {
+    my $self = shift;
+    my %params = $self->param_request({
+        id  =>  'UINT',
+    });
+
+    my $uid = $self->current_user->{info}{id};
+    my $server = M('server')->find({ id =>  $params{id} });
+
+    if (hard_matches($uid, $server->{data}->{who}) != 1) {
+        my $msg = "你对该主机没有权限";
+        $self->fail($msg);
+        return $self->redirect_to('/mypub');
+    }
+
+    if (!$server) {
+        my $msg = '主机不存在';
+        $self->fail($msg);
+        return $self->redirect_to('/mypub');
+    } else {
+        my $serverStatus = {
+            status_ok => $M::User::SERVER_STATUS_OK,
+            status_del => $M::User::SERVER_STATUS_DELETE,
+        };
+        
+        my @serverList = split(',', $server->{data}->{server_address});
+        my %data = (
+            server  =>  $server->{data},
+            serverList  =>  \@serverList,
+            serverStatus => $serverStatus,
+        );
+
+        $self->render('rollback', %data);
+        return;
+
+    }
+}
+
 sub pull {
     my $self = shift;
     my %params = $self->param_request({
@@ -65,6 +103,69 @@ sub pull {
     }
 }
 
+sub do_rollback {
+    my $self = shift;
+    if ($self->req->method eq "POST") {
+        my %params = $self->param_request({
+            id  =>  'UINT',
+            name    =>  'STRING',
+            repo_address    =>  'STRING',
+            server_root =>  'STRING',
+            commit  =>  'STRING',
+        });
+
+        my $rockServers = join(",", $self->param('server_address'));
+        unless ($params{id} && $params{repo_address} && $params{server_root} && $rockServers) {
+            return $self->fail('请完整填写参数');
+        }
+
+        my $tmpServer = M('server')->find({ id => $params{id} });
+
+        my $uid = $self->current_user->{info}{id};
+        if (hard_matches($uid, $tmpServer->{data}->{who}) != 1) {
+            my $msg = '你对该主机没有权限';
+            return $self->fail($msg);
+        }
+        
+        if (!$tmpServer) {
+            my $msg = '主机不存在';
+            $self->fail($msg);
+            return $self->redirect_to('/mypub');
+        } else {
+            my $dir = $ENV{'PWD'};
+            my $now = time();
+            my $file = $dir . "/mussh/hosts/rock-" . $params{id} . "-" . $now;
+            
+            unless (open (MYFILE, ">:utf8", $file)) {
+                my $msg = '无法创建临时文件';
+                $self->fail($msg);
+                return;
+            }
+
+            print MYFILE join("\n", $self->param('server_address'));
+            close MYFILE;
+           
+            my $res = "";
+            if ($params{commit}) {
+                $res = `$dir/rock.sh $params{server_root} $file $params{commit}`;
+            } else {
+                $res = `$dir/rock.sh $params{server_root} $file`;
+            }
+
+            M('log')->insert({
+                uid => $uid,
+                server_id   =>  $params{id},
+                type    =>  '2',
+                res  =>  "$res",
+                time    =>  \'current_timestamp'
+            });
+
+            $self->fail($res);
+            return;
+        }
+    }
+}
+
 sub do_pull {
     my $self = shift;
     if ($self->req->method eq "POST") {
@@ -95,7 +196,7 @@ sub do_pull {
       
             my $dir = $ENV{'PWD'};
             my $now = time();
-            my $file = $dir . "/dsh_group/" . $params{id} . "-" . $now;
+            my $file = $dir . "/mussh/hosts/pull-" . $params{id} . "-" . $now;
             
             unless (open (MYFILE, ">:utf8", $file)) {
                 my $msg = '无法创建临时文件';
@@ -106,8 +207,7 @@ sub do_pull {
             print MYFILE join("\n", $self->param('server_address'));
             close MYFILE;
 
-            my $res = `$dir/pull.sh $params{repo_address} $params{server_root} $file`;
-            say $res;
+            my $res = `$dir/pull.sh $params{server_root} $file $params{repo_address}`;
             M('log')->insert({
                 uid => $uid,
                 server_id   =>  $params{id},
