@@ -267,9 +267,9 @@ sub startup {
     $r = $r->under(sub {
         my $self = shift;
         my $path = $self->req->url->path;
-        if (my $controller = $self->match->captures->{'controller'}) {
+        if (my $controller = $self->match->{captures}{'controller'}) {
             my $module = $self->match->root->namespaces->[0] . '::' . camelize($controller);
-            my $action = $self->match->captures->{'action'};
+            my $action = $self->match->{captures}{'action'};
 
             unless ($module ~~ /^\w(?:[\w:']*\w)?$/
                 and ($module->can('new') || eval "require $module; 1")

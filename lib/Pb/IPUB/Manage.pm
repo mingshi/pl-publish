@@ -86,7 +86,7 @@ sub server_list {
     );
     $self->set_list_data('server', $where, $attrs);
 
-    $self->render('/manage/server_list', %data);
+    $self->render('manage/server_list', %data);
 }
 
 sub del_server {
@@ -205,7 +205,7 @@ sub edit_server {
         };
         $self->set_list_data('user', $where, $attrs);
        
-        $self->render('/manage/edit_server', %data);
+        $self->render('manage/edit_server', %data);
         return;
     }
 }
