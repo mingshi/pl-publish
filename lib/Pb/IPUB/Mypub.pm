@@ -132,7 +132,7 @@ sub do_rollback {
             $self->fail($msg);
             return $self->redirect_to('/mypub');
         } else {
-            my $dir = $ENV{'PWD'};
+            my $dir = $self->app->home->rel_dir('./script');
             my $now = time();
             my $file = $dir . "/mussh/hosts/rock-" . $params{id} . "-" . $now;
             
@@ -147,9 +147,9 @@ sub do_rollback {
            
             my $res = "";
             if ($params{commit}) {
-                $res = `$dir/rock.sh $params{server_root} $file $params{commit}`;
+                $res = `$dir/rock.sh ${dir} $params{server_root} $file $params{commit}`;
             } else {
-                $res = `$dir/rock.sh $params{server_root} $file`;
+                $res = `$dir/rock.sh ${dir} $params{server_root} $file`;
             }
 
             M('log')->insert({
@@ -194,10 +194,11 @@ sub do_pull {
                 return $self->fail($msg);
             }
       
-            my $dir = $ENV{'PWD'};
+            my $dir = $self->app->home->rel_dir('./script');
+            
             my $now = time();
             my $file = $dir . "/mussh/hosts/pull-" . $params{id} . "-" . $now;
-            
+           
             unless (open (MYFILE, ">:utf8", $file)) {
                 my $msg = '无法创建临时文件';
                 $self->fail($msg);
@@ -207,7 +208,7 @@ sub do_pull {
             print MYFILE join("\n", $self->param('server_address'));
             close MYFILE;
 
-            my $res = `$dir/pull.sh $params{server_root} $file $params{repo_address}`;
+            my $res = `$dir/pull.sh $params{server_root} $file $params{repo_address} ${dir}`;
             M('log')->insert({
                 uid => $uid,
                 server_id   =>  $params{id},

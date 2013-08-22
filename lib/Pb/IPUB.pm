@@ -25,7 +25,7 @@ sub startup {
     my $config = $self->plugin('Config', { file => 'config.conf' });
     $ENV{DBI_DATABASE} = 'ipublish';
     $ENV{DBI_USER} = 'root';
-    $ENV{DBI_PASSWORD} = '';
+    $ENV{DBI_PASSWORD} = 'thisisme!';
     $ENV{DBI_HOST} = '127.0.0.1';
 
     $self->plugin('page_navigator', {
