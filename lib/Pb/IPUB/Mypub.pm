@@ -151,7 +151,8 @@ sub do_rollback {
             } else {
                 $res = `$dir/rock.sh ${dir} $params{server_root} $file`;
             }
-
+            
+            $res =~ s/\r?\n/\<br \/\>/g;
             M('log')->insert({
                 uid => $uid,
                 server_id   =>  $params{id},
@@ -209,6 +210,7 @@ sub do_pull {
             close MYFILE;
 
             my $res = `$dir/pull.sh $params{server_root} $file $params{repo_address} ${dir}`;
+            $res =~ s/\r?\n/\<br \/\>/g;
             M('log')->insert({
                 uid => $uid,
                 server_id   =>  $params{id},
@@ -236,11 +238,13 @@ sub detail {
     my $pagesize = $params{pagesize} || 15;
 
     my $where = {};
-    $where->{server_id} = $params{id};
+    $where->{'me.server_id'} = $params{id};
     my $attrs = {
-        'order_by' => '-id',
+        'order_by' => '-me.id',
         'page'  =>  $page,
         'rows_per_page' =>  $pagesize,
+        'left_join' =>  ['user', { 'me.uid' => 'user.uid' }],
+        'select'    =>  'me.*, user.realname',
     };
     
     my $server = M('server')->find({ id => $params{id} });

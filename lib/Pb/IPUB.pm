@@ -206,6 +206,11 @@ sub startup {
                     }
                     return $s;
                 },
+                hard_replace => sub {
+                    my $str = shift;
+                    $str =~ s/\<br \/\>/\n/g;
+                    return $str;
+                },
                 fnum => \&fnum,
                 jsstr => sub {
                     return mark_raw(jsstr(shift));

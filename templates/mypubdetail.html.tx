@@ -4,9 +4,8 @@
         <table class="table table-bordered table-striped">
             <thead>
                 <tr>
-                    <th>用户id</th>
-                    <th>主机id</th>
-                    <th>类型</th>
+                    <th style="width:60px;">用户id</th>
+                    <th style="width:40px;">类型</th>
                     <th>时间</th>
                     <th>返回</th>
                 </tr>
@@ -14,11 +13,10 @@
             <tbody>
                 : for $list_data -> $log {
                     <tr>
-                        <td><: $log.uid :></td>
-                        <td><: $log.server_id :></td>
-                        <td><: $log.type :></td>
+                        <td><: $log.realname :></td>
+                        <td><: if $log.type == 1 { :><span class="label label-info">上线</span><: } else { :><span class="label">回退</span><: } :></td>
                         <td><: $log.time :></td>
-                        <td><: $log.res :></td>
+                        <td><pre><: hard_replace($log.res) :></pre></td>
                     </tr>
                 : }
             </tbody>
