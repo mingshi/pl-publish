@@ -30,11 +30,15 @@ padding: 7px 9px;
     <h2 class="form-signin-heading">登录系统</h2>
     <input type="text" placeholder="用户名" name="username" class="input-block-level">
     <input type="password" placeholder="密码" name="password" class="input-block-level">
-    <!--
-    <label class="checkbox">
-      <input type="checkbox" value="remember-me"> Remember me
-    </label>
-    -->
+    <label>验证码
+        <input type="text" name="captcha" style="width:70px;margin-bottom:0" autocomplete="off"/>
+        <script>
+        document.write('<img src="/login/captcha?r=' + Math.random() + '" style="cursor:pointer" onclick="this.src=this.src.replace(/r=.+$/, \'r=\' + Math.random())" title="看不清？点击换一张"/>');
+        </script>
+    </label> 
+   
+    <br /> 
+    
     <button type="submit" class="btn btn-large btn-primary">登录</button>
 </form>
 <script>$(function(){$('.form-signin :input:first')[0].focus()});</script>

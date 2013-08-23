@@ -13,6 +13,10 @@ sub index {
         my $username = $self->param('username');
         my $password = $self->param('password');
 
+        unless ($self->validate_captcha($self->param('captcha'))) {
+            return $self->fail('验证码错误', go => '/login');
+        }
+
         unless ($username && $password) {
             return $self->fail('请填写用户名和密码', go => '/login');
         }
@@ -27,5 +31,10 @@ sub index {
 
     $self->render('login');
 }
+
+sub captcha {
+    my $self = shift;
+    $self->render( data => $self->create_captcha ); 
+} 
 
 1;

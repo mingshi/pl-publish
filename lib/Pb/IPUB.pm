@@ -39,6 +39,22 @@ sub startup {
         'disabled_class' => 'disabled',
     });
 
+    $self->plugin('captcha' => {
+            session_name => 'captcha_publish',
+            out => {force => 'jpeg'},
+            particle => [100,1],
+            create => [qw/normal rect/],
+            new => {
+                rnd_data => ['A'...'Z', 'a'...'z'],
+                rndmax => 4,
+                width => 80,
+                height => 30,
+                lines => 1,
+                gd_font => 'giant',
+            }
+        }
+    );
+
     $self->plugin('form_validation', {
         global_filter_names => ['trim'],
         checks => {
