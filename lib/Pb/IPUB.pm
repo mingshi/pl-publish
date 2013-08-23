@@ -45,7 +45,7 @@ sub startup {
             particle => [100,1],
             create => [qw/normal rect/],
             new => {
-                rnd_data => ['A'...'Z', 'a'...'z'],
+                rnd_data => ['A'...'Z'],
                 rndmax => 4,
                 width => 80,
                 height => 30,
