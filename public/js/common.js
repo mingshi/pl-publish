@@ -113,7 +113,11 @@
 
         $.post($f.attr('action') || location.href, post_params, function(ret){
             if (ret.code != 0) {
-                popup_msg(ret ? ret.msg : '发生异常错误', 'error');
+                if (ret.code == 3) {
+                    popup_msg(ret ? ret.msg : '发生异常错误', 'info');
+                } else {
+                    popup_msg(ret ? ret.msg : '发生异常错误', 'error');
+                }
             } else {
 
                 $f.trigger('ajax_succ', ret); 

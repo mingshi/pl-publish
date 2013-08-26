@@ -161,7 +161,7 @@ sub do_rollback {
                 time    =>  \'current_timestamp'
             });
 
-            $self->fail($res);
+            $self->info($res);
             return;
         }
     }
@@ -219,7 +219,7 @@ sub do_pull {
                 time    =>  \'current_timestamp'
             });
             
-            $self->fail($res);
+            $self->info($res);
             return;
 
         }
