@@ -52,7 +52,7 @@
                 </div>
 
                 <div class="control-group">
-                    <label class="control-label" for="attention">分配用户:</label>
+                    <label class="control-label" for="attention">关注用户:</label>
                     <div class="controls">
                         : for $list_data -> $user {
                             <input type="checkbox" name="attention" value="<: $user.uid :>" <: if hard_match($user.uid, $detail.attention) == 1 { :> checked <: } :>  /><span> <: $user.realname :></span>
