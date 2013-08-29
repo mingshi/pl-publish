@@ -210,6 +210,7 @@ sub do_pull {
             close MYFILE;
 
             my $res = `$dir/pull.sh $params{server_root} $file $params{repo_address} ${dir}`;
+            my $qqRes = $res;
             $res =~ s/\r?\n/\<br \/\>/g;
             M('log')->insert({
                 uid => $uid,
@@ -218,8 +219,11 @@ sub do_pull {
                 res  =>  "$res",
                 time    =>  \'current_timestamp'
             });
-            
+           
             $self->info($res);
+            
+            my $qqInfo = $self->current_user->{info}{realname} ." 上线了 " . $tmpServer->{data}->{name} . "   结果为:\n" . $qqRes;
+            M::User::send_qq_info($self, $tmpServer->{data}{attention}, $qqInfo);
             return;
 
         }

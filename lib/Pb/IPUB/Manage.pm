@@ -38,16 +38,22 @@ sub save_server {
         my @tmpServer = split(/\r?\n/, $params{server_address});
         my $currentServer = join(',', @tmpServer);
         my $who = join(',', $self->param('who'));
-       
+        my $attention = join(',', $self->param('attention'));
+
         if ($who eq '') {
             $who = 0;
-        } 
+        }
+
+        if ($attention eq '') {
+            $attention = 0;
+        }
         my $ins = $self->validation_data;
         $ins->{name} = $params{name};
         $ins->{server_address} = $currentServer;
         $ins->{repo_address} = $params{repo_address};
         $ins->{server_root} = $params{server_root};
         $ins->{who} = $who;
+        $ins->{attention} = $attention;
         my $m = R('server');
         my $server = $m->insert($ins);
         my $msg = '添加成功';
@@ -152,9 +158,14 @@ sub edit_server {
         my @tmpServer = split(/\r?\n/, $params{server_address});
         my $currentServer = join(',', @tmpServer);
         my $who = join(',', $self->param('who'));
+        my $attention = join(',', $self->param('attention'));
 
         if ($who eq '') {
             $who = 0;
+        }
+
+        if ($attention eq '') {
+            $attention = 0;
         }
 
         my $theServer = M('server')->find({ id => $params{id} });
@@ -171,6 +182,7 @@ sub edit_server {
             $upt->{server_root} = $params{server_root};
             $upt->{who} = $who;
             $upt->{status} = $params{status};
+            $upt->{attention} = $attention;
 
             $theServer->update($upt);
 

@@ -67,4 +67,21 @@ sub get_user_info {
 
     return $tmpRes;
 };
+
+sub send_qq_info {
+    my ($self, $uid, $info) = @_;
+    my $users = get_user_info($uid, $self->config->{userinfo_key}, $self->config->{userinfo_sign}, $self->config->{multiuserinfo_url});
+  
+    my @infos = @{$users->{info}};
+    my $qq = "";
+    foreach my $item (@infos) {
+        $qq .= $item->{qq} . ",";
+    }
+    
+    $qq =~ s/^,|,$//g;
+
+    my $ua = Mojo::UserAgent->new;
+    my $res = $ua->get($self->config->{qqUrl} . "qq=$qq&content=$info");
+    return $res;
+}
 1;

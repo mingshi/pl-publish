@@ -42,6 +42,15 @@
             </div>
             
             <div class="control-group">
+                <label class="control-label" for="attention">关注用户:</label>
+                <div class="controls">
+                    : for $list_data -> $user {
+                        <input type="checkbox" name="attention" value="<: $user.uid :>" /><span> <: $user.realname :></span>
+                    : }
+                </div>
+            </div>
+            
+            <div class="control-group">
                 <div class="controls">
                     <button type="submit" id="ok" class="btn btn-primary">添加</button>
                 </div>

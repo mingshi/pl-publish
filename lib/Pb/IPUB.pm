@@ -1,4 +1,6 @@
 package Pb::IPUB;
+use strict;
+use warnings;
 use Mojo::Base 'Mojolicious';
 use MY::Controller;
 use Text::Xslate::Util qw/mark_raw/;
@@ -15,6 +17,37 @@ $M::User::SERVER_STATUS_DELETE = 0;
 
 sub startup {
     my $self = shift;
+    
+    my @localHost = ("mingshi-hacking.local","hahhaha");
+   
+    my $hostName = `uname -a|awk '{print \$2}'`;
+    chomp($hostName);
+
+    #foreach (@localHost) {
+    #    print($_);
+    #    print($hostName);
+    #    if ("$hostName" eq "$_") {
+    #        print('dede');
+    #    }
+    #}
+    #
+    #
+    #
+    #map { if ($hostName eq $_) { print "11111"}} @localHost;
+
+    #print( grep /^$hostName$/, @localHost );
+
+    if (@localHost ~~ /^$hostName$/) {
+        $ENV{ENV} = 'local';
+    } else {
+        $ENV{ENV} = 'product';
+    }
+
+
+    #if (grep {$_ eq "$hostName"} @localHost) {
+    #    print('11111');
+    #}
+
 
     $self->secret("Rocking yourself out of the life");
     $self->controller_class("MY::Controller");
@@ -25,7 +58,11 @@ sub startup {
     my $config = $self->plugin('Config', { file => 'config.conf' });
     $ENV{DBI_DATABASE} = 'ipublish';
     $ENV{DBI_USER} = 'root';
-    $ENV{DBI_PASSWORD} = 'thisisme!';
+    if ($ENV{ENV} eq "local") {
+        $ENV{DBI_PASSWORD} = '';
+    } else {
+        $ENV{DBI_PASSWORD} = 'thisisme!';
+    }
     $ENV{DBI_HOST} = '127.0.0.1';
 
     $self->plugin('page_navigator', {
