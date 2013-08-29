@@ -152,6 +152,8 @@ sub do_rollback {
                 $res = `$dir/rock.sh ${dir} $params{server_root} $file`;
             }
             
+            my $qqRes = $res;
+
             $res =~ s/\r?\n/\<br \/\>/g;
             M('log')->insert({
                 uid => $uid,
@@ -162,6 +164,10 @@ sub do_rollback {
             });
 
             $self->info($res);
+            
+            my $qqInfo = $self->current_user->{info}{realname} ." 回退了 " . $tmpServer->{data}->{name} . "   结果为:\n" . $qqRes;
+            M::User::send_qq_info($self, $tmpServer->{data}{attention}, $qqInfo);
+
             return;
         }
     }
