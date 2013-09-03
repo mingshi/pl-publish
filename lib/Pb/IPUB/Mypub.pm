@@ -1,6 +1,6 @@
 package Pb::IPUB::Mypub;
 use Mojo::Base 'MY::Controller';
-use Mojo::Util qw/encode/;
+use Mojo::Util qw/encode decode/;
 use MY::Utils;
 use Mojo::JSON;
 use JSON::XS;
@@ -307,6 +307,7 @@ sub serverInfo {
 
     }
 
+    $res = decode('UTF-8', $res);
     $self->render(text  =>  $res);
 }
 
