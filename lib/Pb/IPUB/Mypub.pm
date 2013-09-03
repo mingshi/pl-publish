@@ -5,6 +5,8 @@ use MY::Utils;
 use Mojo::JSON;
 use JSON::XS;
 use Data::Dumper;
+use autodie;
+use Try::Tiny;
 
 sub index {
     my $self = shift;
@@ -55,10 +57,16 @@ sub rollback {
         };
         
         my @serverList = split(',', $server->{data}->{server_address});
+        
+        my $serversCount = @serverList;
+        my $divWidth = int(100 / $serversCount); 
+
         my %data = (
             server  =>  $server->{data},
             serverList  =>  \@serverList,
             serverStatus => $serverStatus,
+            divWidth    =>  $divWidth,
+            serversCount    =>  $serversCount,
         );
 
         $self->render('rollback', %data);
@@ -278,6 +286,29 @@ sub detail {
 
 }
 
+sub serverInfo {
+    my $self = shift;
+    my %params = $self->param_request({
+        host    =>  'STRING',
+        id      =>  'UINT',
+    });
+   
+    my $res;
+    my $server = M('server')->find({ id => $params{id} });
+    if (!$server) {
+        $res = '找不到该主机';
+    } else {
+        try {
+            my $serverDir = $server->{data}->{server_root};
+            $res = `ssh -o StrictHostKeyChecking=no $params{host} 'cd $serverDir;git log|head -60'`;
+        } catch {
+            $res = '远程获取状态失败';
+        }
+
+    }
+
+    $self->render(text  =>  $res);
+}
 
 sub hard_matches {
     my $f = "," . shift . ",";

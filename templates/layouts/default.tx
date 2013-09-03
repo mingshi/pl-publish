@@ -68,8 +68,11 @@
 
     <div class="container">
     : block content -> {}
+    <footer>
+        <p>Adeaz Publish V1.0 By Mingshi fivemingshi@gmail.com</p>
+    </footer>
     </div>
-
+    
    <div id="popup-msg" class="alert" style="display:none">
    </div>
 
