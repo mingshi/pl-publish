@@ -44,7 +44,14 @@
                         : }
                     </div>
                 </div>
-                
+              
+                <div class="control-group">
+                    <label class="control-label" for="script">执行脚本:</label>
+                    <div class="controls">
+                        <textarea id="script" name="script"><: $server.script :></textarea><span> 代码更新之后要执行得脚本 没有就不要写</span>
+                    </div>
+                </div>
+
                 <div class="control-group"> 
                     <div class="controls">
                         <input type="hidden" name="id" value="<: $server.id :>" />

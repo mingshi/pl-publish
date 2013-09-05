@@ -189,6 +189,7 @@ sub do_pull {
             name => 'STRING',
             repo_address    =>  'STRING',
             server_root =>  'STRING',
+            script  =>  'STRING',
         });
 
         my $pullServers = join(",", $self->param('server_address'));
