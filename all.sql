@@ -32,3 +32,5 @@ create table log (
 ) engine=innodb default charset utf8;
 
 alter table server add attention varchar(255) NOT NULL DEFAULT '0' COMMENT '关注用户';
+
+alter table server add script text;
