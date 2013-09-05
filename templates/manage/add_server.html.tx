@@ -33,6 +33,13 @@
             </div>
 
             <div class="control-group">
+                <label class="control-label" for="script">执行脚本:</label>
+                <div class="controls">
+                    <textarea type="text" id="script" name="script"></textarea><span> 代码更新之后需要执行的脚本，没有就不要填</span>
+                </div>
+            </div>
+            
+            <div class="control-group">
                 <label class="control-label" for="who">分配用户:</label>
                 <div class="controls">
                     : for $list_data -> $user {

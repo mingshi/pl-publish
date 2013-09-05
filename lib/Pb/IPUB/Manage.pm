@@ -29,6 +29,7 @@ sub save_server {
             server_address => 'STRING',
             repo_address => 'STRING',
             server_root =>  'STRING',
+            script  =>  'STRING',
         });
 
         unless ($params{name} && $params{server_address} && $params{repo_address} && $params{server_root}) {
@@ -52,6 +53,7 @@ sub save_server {
         $ins->{server_address} = $currentServer;
         $ins->{repo_address} = $params{repo_address};
         $ins->{server_root} = $params{server_root};
+        $ins->{script} = $params{script};
         $ins->{who} = $who;
         $ins->{attention} = $attention;
         my $m = R('server');
@@ -145,6 +147,7 @@ sub edit_server {
             repo_address => 'STRING',
             server_root =>  'STRING',
             status  =>  'UINT',
+            script  =>  'STRING',
         });
 
         unless ($params{id})  {
@@ -183,6 +186,7 @@ sub edit_server {
             $upt->{who} = $who;
             $upt->{status} = $params{status};
             $upt->{attention} = $attention;
+            $upt->{script} = $params{script};
 
             $theServer->update($upt);
 
