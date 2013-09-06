@@ -52,6 +52,19 @@
                     </div>
                 </div>
                 
+                <div class="control-group">
+                    <label class="control-label" for="script">执行脚本:</label>
+                    <div class="controls">
+                        <textarea id="script" name="script"><: $server.script :></textarea><span> 代码更新之后要执行得脚本 没有就不要写</span>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <div class="controls">
+                        <input type="checkbox" value="1" name="is_run_script" id="is_run_script" /><span> 是否在代码更新之后执行上面得脚本 默认不执行 勾选执行</span>
+                    </div>
+                </div>
+                
                 <div class="control-group"> 
                     <div class="controls">
                         <input type="hidden" id="id" name="id" value="<: $server.id :>" />

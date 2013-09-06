@@ -52,6 +52,12 @@
                     </div>
                 </div>
 
+                <div class="control-group">
+                    <div class="controls">
+                        <input type="checkbox" value="1" name="is_run_script" id="is_run_script" /><span> 是否在代码更新之后执行上面得脚本 默认不执行 勾选执行</span>
+                    </div>
+                </div>
+
                 <div class="control-group"> 
                     <div class="controls">
                         <input type="hidden" name="id" value="<: $server.id :>" />

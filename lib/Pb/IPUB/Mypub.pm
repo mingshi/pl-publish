@@ -120,6 +120,8 @@ sub do_rollback {
             repo_address    =>  'STRING',
             server_root =>  'STRING',
             commit  =>  'STRING',
+            script  =>  'STRING',
+            is_run_script   =>  'UINT',
         });
 
         my $rockServers = join(",", $self->param('server_address'));
@@ -170,9 +172,30 @@ sub do_rollback {
                 res  =>  "$res",
                 time    =>  \'current_timestamp'
             });
-
-            $self->info($res);
             
+            my $secRes = "回退失败";
+            if ($res ~~ /HEAD is now at/) {
+                $params{script} =~ s/^\s+|\s+$//g;
+                $secRes = "回退成功";
+                if ($params{script} and $params{is_run_script}) {
+                    my $scriptRes = `$dir/script.sh ${dir} $file "$params{script}"`;
+                    my @lines = split /\n\r?/, $scriptRes;
+                    if ($lines[-1] eq 0) {
+                        $secRes .= "\n脚本执行成功";
+                        $secRes =~ s/\r?\n/\<br \/\>/g;
+                        $self->info($secRes);
+                    } else {
+                        $secRes .= "\n脚本执行失败";
+                        $secRes =~ s/\r?\n/\<br \/\>/g;
+                        $self->fail($secRes);
+                    }
+                } else {
+                    $self->info($secRes);
+                }
+            } else {
+                $self->fail($secRes);
+            }
+
             my $qqInfo = $self->current_user->{info}{realname} ." 回退了 " . $tmpServer->{data}->{name} . "   结果为:\n" . $qqRes;
             M::User::send_qq_info($self, $tmpServer->{data}{attention}, $qqInfo);
 
@@ -190,6 +213,7 @@ sub do_pull {
             repo_address    =>  'STRING',
             server_root =>  'STRING',
             script  =>  'STRING',
+            is_run_script   =>  'UINT',
         });
 
         my $pullServers = join(",", $self->param('server_address'));
@@ -235,7 +259,28 @@ sub do_pull {
                 time    =>  \'current_timestamp'
             });
            
-            $self->info($res);
+            my $secRes = "上线失败";
+            if ($res ~~ /Already up-to-date/ or $res ~~ /Fast-forward/) {
+                $params{script} =~ s/^\s+|\s+$//g;
+                $secRes = "上线成功";
+                if ($params{script} and $params{is_run_script}) {
+                    my $scriptRes = `$dir/script.sh ${dir} $file "$params{script}"`;
+                    my @lines = split /\n\r?/, $scriptRes;
+                    if ($lines[-1] eq 0) {
+                        $secRes .= "\n脚本执行成功";
+                        $secRes =~ s/\r?\n/\<br \/\>/g; 
+                        $self->info($secRes);
+                    } else {
+                        $secRes .= "\n脚本执行失败";
+                        $secRes =~ s/\r?\n/\<br \/\>/g;
+                        $self->fail($secRes);
+                    }
+                } else {
+                    $self->info($secRes);
+                }
+            } else {
+                $self->info($secRes);
+            }
             
             my $qqInfo = $self->current_user->{info}{realname} ." 上线了 " . $tmpServer->{data}->{name} . "   结果为:\n" . $qqRes;
             M::User::send_qq_info($self, $tmpServer->{data}{attention}, $qqInfo);
