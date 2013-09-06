@@ -177,7 +177,7 @@ sub do_rollback {
             if ($res ~~ /HEAD is now at/) {
                 $params{script} =~ s/^\s+|\s+$//g;
                 $secRes = "回退成功";
-                if ($params{script} and $params{is_run_script}) {
+                if ($params{script} and $params{is_run_script} and ($params{script} eq $tmpServer->{data}->{script})) {
                     my $scriptRes = `$dir/script.sh ${dir} $file "$params{script}"`;
                     my @lines = split /\n\r?/, $scriptRes;
                     if ($lines[-1] eq 0) {
@@ -196,6 +196,10 @@ sub do_rollback {
                 $self->fail($secRes);
             }
 
+            if (-f $file) {
+                unlink($file);
+            }
+            
             my $qqInfo = $self->current_user->{info}{realname} ." 回退了 " . $tmpServer->{data}->{name} . "   结果为:\n" . $qqRes;
             M::User::send_qq_info($self, $tmpServer->{data}{attention}, $qqInfo);
 
@@ -263,7 +267,7 @@ sub do_pull {
             if ($res ~~ /Already up-to-date/ or $res ~~ /Fast-forward/) {
                 $params{script} =~ s/^\s+|\s+$//g;
                 $secRes = "上线成功";
-                if ($params{script} and $params{is_run_script}) {
+                if ($params{script} and $params{is_run_script} and $params{script} eq $tmpServer->{data}->{script}) {
                     my $scriptRes = `$dir/script.sh ${dir} $file "$params{script}"`;
                     my @lines = split /\n\r?/, $scriptRes;
                     if ($lines[-1] eq 0) {
@@ -280,6 +284,10 @@ sub do_pull {
                 }
             } else {
                 $self->info($secRes);
+            }
+            
+            if (-f $file) {
+                unlink($file);
             }
             
             my $qqInfo = $self->current_user->{info}{realname} ." 上线了 " . $tmpServer->{data}->{name} . "   结果为:\n" . $qqRes;
