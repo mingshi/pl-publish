@@ -157,7 +157,11 @@ sub do_rollback {
                 if ($params{commit} =~ /^([0-9a-z]+)$/) {
                     $res = `$dir/rock.sh ${dir} $tmpServer->{data}->{server_root} $file $params{commit}`;
                 } else {
+                    if (-f $file) {
+                        unlink($file);
+                    }
                     $self->fail("你想干嘛？你看看你提交的commit是啥玩意儿？");
+                    return;
                 }
             } else {
                 $res = `$dir/rock.sh ${dir} $tmpServer->{data}->{server_root} $file`;
