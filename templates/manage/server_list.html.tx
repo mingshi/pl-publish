@@ -2,7 +2,7 @@
 : around content -> {
     <div style="margin-top:60px;" class="well">
         <input type="text" id="kw" name="kw" placeholder="模糊搜索" class="span2 large" />
-        <table class="table table-bordered table-striped">
+        <table class="table table-bordered table-striped" id="listTable">
             <thead>
                 <tr>
                     <th>名称</th>
