@@ -1,6 +1,7 @@
 : cascade layouts::default
 : around content -> {
     <div style="margin-top:60px;" class="well">
+        <input type="text" id="kw" name="kw" placeholder="模糊搜索" class="span2 large" />
         <table class="table table-bordered table-striped">
             <thead>
                 <tr>
@@ -44,4 +45,26 @@
 <div class="pagination">
 <: $pagination | raw :>
 </div>
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        $("#kw").keyup(function() {
+            if ( $(this).val() != "") {
+                $("#listTable tbody>tr").hide();
+                $("#listTable td:contains-ci('" + $(this).val() + "')").parent("tr").show();
+            } else {
+                $("#listTable tbody>tr").show();
+            }
+        });
+    });
+
+    $.extend($.expr[":"],
+    {
+        "contains-ci": function(elem, i, match, array)
+        {
+            return (elem.textContent || elem.innerText || $(elem).text() || "").toLowerCase().indexOf((match[3] || "").toLowerCase()) >= 0;
+        }
+    });
+</script>
+
 : }

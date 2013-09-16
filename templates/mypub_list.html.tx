@@ -1,8 +1,8 @@
 : cascade layouts::default
 : around content -> {
     <div style="margin-top:60px;" class="well">
-        <input type="text" id="kw" name="kw" placeholder="名称 模糊搜索" class="span2 large" />
-        <table class="table table-bordered table-striped" id="userTable">
+        <input type="text" id="kw" name="kw" placeholder="模糊搜索" class="span2 large" />
+        <table class="table table-bordered table-striped" id="listTable">
             <thead>
                 <th>名称</th>
                 <th>主机地址</th>
@@ -40,10 +40,10 @@
         $(document).ready(function(){
             $("#kw").keyup(function() {
                 if ( $(this).val() != "") {
-                    $("#userTable tbody>tr").hide();
-                    $("#userTable td:contains-ci('" + $(this).val() + "')").parent("tr").show();
+                    $("#listTable tbody>tr").hide();
+                    $("#listTable td:contains-ci('" + $(this).val() + "')").parent("tr").show();
                 } else {
-                    $("#userTable tbody>tr").show();
+                    $("#listTable tbody>tr").show();
                 }
             });
         });
