@@ -116,16 +116,12 @@ sub do_rollback {
     if ($self->req->method eq "POST") {
         my %params = $self->param_request({
             id  =>  'UINT',
-            name    =>  'STRING',
-            repo_address    =>  'STRING',
-            server_root =>  'STRING',
             commit  =>  'STRING',
-            script  =>  'STRING',
             is_run_script   =>  'UINT',
         });
 
         my $rockServers = join(",", $self->param('server_address'));
-        unless ($params{id} && $params{repo_address} && $params{server_root} && $rockServers) {
+        unless ($params{id} && $rockServers) {
             return $self->fail('请完整填写参数');
         }
 
@@ -157,9 +153,14 @@ sub do_rollback {
            
             my $res = "";
             if ($params{commit}) {
-                $res = `$dir/rock.sh ${dir} $params{server_root} $file $params{commit}`;
+                $params{commit} =~ s/^\s+|\s+$//g;
+                if ($params{commit} =~ /^([0-9a-z]+)$/) {
+                    $res = `$dir/rock.sh ${dir} $tmpServer->{data}->{server_root} $file $params{commit}`;
+                } else {
+                    $self->fail("你想干嘛？你看看你提交的commit是啥玩意儿？");
+                }
             } else {
-                $res = `$dir/rock.sh ${dir} $params{server_root} $file`;
+                $res = `$dir/rock.sh ${dir} $tmpServer->{data}->{server_root} $file`;
             }
             
             my $qqRes = $res;
@@ -175,10 +176,10 @@ sub do_rollback {
             
             my $secRes = "回退失败";
             if ($res ~~ /HEAD is now at/) {
-                $params{script} =~ s/^\s+|\s+$//g;
+                $tmpServer->{data}->{script} =~ s/^\s+|\s+$//g;
                 $secRes = "回退成功";
-                if ($params{script} and $params{is_run_script} and ($params{script} eq $tmpServer->{data}->{script})) {
-                    my $scriptRes = `$dir/script.sh ${dir} $file "$params{script}"`;
+                if ($tmpServer->{data}->{script} and $params{is_run_script}) {
+                    my $scriptRes = `$dir/script.sh ${dir} $file "$tmpServer->{data}->{script}"`;
                     my @lines = split /\n\r?/, $scriptRes;
                     if ($lines[-1] eq 0) {
                         $secRes .= "\n脚本执行成功";
@@ -213,15 +214,11 @@ sub do_pull {
     if ($self->req->method eq "POST") {
         my %params = $self->param_request({
             id  => 'UINT',
-            name => 'STRING',
-            repo_address    =>  'STRING',
-            server_root =>  'STRING',
-            script  =>  'STRING',
             is_run_script   =>  'UINT',
         });
 
         my $pullServers = join(",", $self->param('server_address'));
-        unless ($params{id} && $params{repo_address} && $params{server_root} && $pullServers) {
+        unless ($params{id} && $pullServers) {
             return $self->fail('请完整填写参数');
         }
 
@@ -252,7 +249,7 @@ sub do_pull {
             print MYFILE join("\n", $self->param('server_address'));
             close MYFILE;
 
-            my $res = `$dir/pull.sh $params{server_root} $file $params{repo_address} ${dir}`;
+            my $res = `$dir/pull.sh $tmpServer->{data}->{server_root} $file $tmpServer->{data}->{repo_address} ${dir}`;
             my $qqRes = $res;
             $res =~ s/\r?\n/\<br \/\>/g;
             M('log')->insert({
@@ -265,10 +262,10 @@ sub do_pull {
            
             my $secRes = "上线失败";
             if ($res ~~ /Already up-to-date/ or $res ~~ /Fast-forward/) {
-                $params{script} =~ s/^\s+|\s+$//g;
+                $tmpServer->{data}->{script} =~ s/^\s+|\s+$//g;
                 $secRes = "上线成功";
-                if ($params{script} and $params{is_run_script} and $params{script} eq $tmpServer->{data}->{script}) {
-                    my $scriptRes = `$dir/script.sh ${dir} $file "$params{script}"`;
+                if ($tmpServer->{data}->{script} and $params{is_run_script}) {
+                    my $scriptRes = `$dir/script.sh ${dir} $file "$tmpServer->{data}->{script}"`;
                     my @lines = split /\n\r?/, $scriptRes;
                     if ($lines[-1] eq 0) {
                         $secRes .= "\n脚本执行成功";

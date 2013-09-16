@@ -4,12 +4,6 @@
         <form id="server_form_<: $server.id :>" class="ajax form-horizontal" method="post" action="/mypub/do_pull">
             <fieldset>
                 <legend><h3>站点<span style="color:teal"><: $server.name :></span>上线 ^_^</h3></legend>
-                <div class="control-group">
-                    <label class="control-label" for="name">名称:</label>
-                    <div class="controls">
-                        <input type="text" id="name" name="name" value="<: $server.name :>" readonly />
-                    </div>
-                </div>
 
                 <div class="control-group">
                     <label class="control-label" for="server_address">主机地址:</label>
@@ -17,20 +11,6 @@
                         : for $serverList -> $address {
                             <input type="checkbox" name="server_address" value="<: $address :>" checked /> <: $address :><br />
                         : }
-                    </div>
-                </div>
-
-                <div class="control-group">
-                    <label class="control-label" for="repo_address">仓库地址:</label>
-                    <div class="controls">
-                        <input type="text" id="repo_address" name="repo_address" value="<: $server.repo_address :>" readonly />
-                    </div>
-                </div>
-
-                <div class="control-group">
-                    <label class="control-label" for="server_root">目录地址:</label>
-                    <div class="controls">
-                        <input type="text" id="server_root" name="server_root" value="<: $server.server_root :>" readonly />
                     </div>
                 </div>
 
@@ -48,7 +28,7 @@
                 <div class="control-group">
                     <label class="control-label" for="script">执行脚本:</label>
                     <div class="controls">
-                        <input id="script" name="script" value="<: $server.script :>" readonly type="text" /><span> 代码更新之后要执行得脚本 没有就不要写</span>
+                        <: $server.script :>
                     </div>
                 </div>
 
