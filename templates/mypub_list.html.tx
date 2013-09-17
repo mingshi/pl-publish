@@ -8,16 +8,19 @@
                 <th>主机地址</th>
                 <th>仓库地址</th>
                 <th>目录地址</th>
+                <th style="width:100px;">所属用户</th>
                 <th>状态</th>
                 <th style="width:200px">操作</th>
             </thead>
-            <tbody>
+            <tbody id="tbody">
                 : for $list_data -> $server {
                     <tr>
+                        <input type="hidden" id="who" value="<: $server.who :>" />
                         <td><: $server.name :></td>
                         <td><: $server.server_address :></td>
                         <td><: $server.repo_address :></td>
                         <td><: $server.server_root :></td>
+                        <td style="text-align:center;" id="whoInfo"><img width="20px" src="../static/loading.gif" /></td>
                         <td>
                             : if ($server.status == $serverStatus.status_ok) {
                                 <span class="label label-success">正常</span>
@@ -54,6 +57,20 @@
             {
                 return (elem.textContent || elem.innerText || $(elem).text() || "").toLowerCase().indexOf((match[3] || "").toLowerCase()) >= 0;
             }
+        });
+
+        $(function() {
+            $("#tbody").children().each(function() {
+                var who = $(this).children("#who").val();
+                var me = $(this).children("#whoInfo");
+                $.ajax({
+                    url : "/mypub/getUser",
+                    type : "post",
+                    data : {'uids' : who}
+                }).done(function(result) {
+                    me.html(result);
+                });
+            });
         });
     </script>
 :}

@@ -31,6 +31,33 @@ sub index {
     return;
 }
 
+sub getUser {
+    my $self = shift;
+    my %params = $self->param_request({
+        uids => 'STRING', 
+    });
+
+    my $where = {};
+
+    $where->{uid} = [
+        split(',' ,$params{uids})
+    ];
+   
+    my $attrs = {};
+    $self->set_list_data('user', $where, $attrs);
+
+    my $users = $self->stash('list_data');
+    my $usersStr = "";
+    for my $user (@$users) {
+        $usersStr .= $user->{realname}.",";
+    }
+
+    $usersStr =~ s/^,|,$//g;
+
+    $self->render(text => $usersStr);
+    return;
+}
+
 sub rollback {
     my $self = shift;
     my %params = $self->param_request({

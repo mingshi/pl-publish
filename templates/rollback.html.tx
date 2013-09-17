@@ -64,7 +64,7 @@
                     <legend>主机"<span style="color:#008080;"><: $address :></span>" git log 信息</legend>
                     <div class="control-group" id="halo">
                         <div class="controls" id="detailinfo">
-                            <div style="text-align:center;"><img src="../static/loading.gif" /></div>
+                            <div style="text-align:center;"><img src="../static/loading1.gif" /></div>
                         </div>
                     </div>
                 </fieldset>
