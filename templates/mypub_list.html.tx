@@ -28,7 +28,7 @@
                                 <span class="label label-warning">停用</span>
                             : }
                         </td>
-                        <td>
+                        <td style="width:200px;">
                             <a href="/mypub/detail?id=<: $server.id :>" class="btn btn-mini btn-primary"><i class="icon-file"></i>详情</a>
                             <a href="/mypub/pull?id=<: $server.id :>" class="btn btn-mini btn-warning"><i class="icon-forward"></i>上线</a>
                             
