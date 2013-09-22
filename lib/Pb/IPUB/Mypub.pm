@@ -458,29 +458,24 @@ sub my_charts {
 
     my @keyPull = sort(keys %{$resPull});
     my @valuePull;
+    my @valueRoll;
 
     my $keyStr = "";
     my $valuePullStr = "";
     my $valueRollStr = "";
     for my $date (@keyPull) {
         $keyStr .= "'".$date."',";
-        $valuePullStr .= $resPull->{$date}.",";
-        $valueRollStr .= $resRoll->{$date}.",";
-        #push(@valuePull, $resPull->{$date});
+        push(@valuePull, $resPull->{$date});
+        push(@valueRoll, $resRoll->{$date});
     }
     
-    $keyStr =~ s/^,|,$//g;
-    $keyStr = "[".$keyStr."]";
-    
-    $valuePullStr =~ s/^,|,$//g;
-    $valuePullStr = "[".$valuePullStr."]";
+    $keyStr = encode_json(\@keyPull);
+    $valuePullStr = encode_json(\@valuePull);
+    $valueRollStr = encode_json(\@valueRoll);
 
-    $valueRollStr =~ s/^,|,$//g;
-    $valueRollStr = "[".$valueRollStr."]";
-
-    # get the roll back count bet ween the search time
-
-
+    $keyStr =~ s/"/'/g;
+    $valuePullStr =~ s/"//g;
+    $valueRollStr =~ s/"//g;
     my %data = (
         startDate   =>  $params{searchStartDate},
         endDate     =>  $params{searchEndDate},
