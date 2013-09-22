@@ -400,5 +400,9 @@ sub hard_matches {
     return $w;
 }
 
+sub my_charts {
+    my $self = shift;
+    $self->render('my_charts');
+}
 
 1;
