@@ -16,7 +16,7 @@
 <script type="text/javascript" src="/highcharts/js/highcharts.js"></script> 
 <script type="text/javascript" src="/highcharts/js/modules/exporting.js"></script> 
 </head> 
-<body>
+<body  style="background-image:url(/static/bg1.jpg)">
     <div class="navbar navbar-inverse navbar-fixed-top">
       <div class="navbar-inner">
         <div class="container">
