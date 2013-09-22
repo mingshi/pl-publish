@@ -7,6 +7,9 @@ use JSON::XS;
 use Data::Dumper;
 use autodie;
 use Try::Tiny;
+use POSIX qw(strftime);
+use Time::Local;
+use Date::Parse;
 
 sub index {
     my $self = shift;
@@ -402,7 +405,93 @@ sub hard_matches {
 
 sub my_charts {
     my $self = shift;
-    $self->render('my_charts');
+    my $uid = $self->current_user->{info}{id};
+    
+    my %params = $self->param_request({
+        searchStartDate =>  'STRING', 
+        searchEndDate   =>  'STRING',
+    });
+
+    $params{searchStartDate} //= strftime "%Y-%m-%d", localtime(time() - 86400 * 7);
+    $params{searchEndDate} //= strftime("%Y-%m-%d", localtime());
+
+    # get the pull count between the search time
+    my @rows = M('log', 'ipublish')->select({
+        -and   => [
+            'FROM_UNIXTIME(UNIX_TIMESTAMP(me.time), "%Y-%m-%d")'    =>  { '>=' => "$params{searchStartDate}" },
+            'FROM_UNIXTIME(UNIX_TIMESTAMP(me.time), "%Y-%m-%d")'    =>  { '<=' => "$params{searchEndDate}" },
+            'me.type'    =>  1,
+            'me.uid'     =>  $uid,
+        ], 
+    }, {
+        'select' => 'count(*) as total, FROM_UNIXTIME(UNIX_TIMESTAMP(me.time), "%Y-%m-%d") as t',
+        'group_by' => 't',
+    })->all;  
+   
+    my @rows1 = M('log', 'ipublish')->select({
+        -and   => [
+            'FROM_UNIXTIME(UNIX_TIMESTAMP(me.time), "%Y-%m-%d")'    =>  { '>=' => "$params{searchStartDate}" },
+            'FROM_UNIXTIME(UNIX_TIMESTAMP(me.time), "%Y-%m-%d")'    =>  { '<=' => "$params{searchEndDate}" },
+            'me.type'    =>  2,
+            'me.uid'     =>  $uid,
+        ],
+    }, {
+        'select' => 'count(*) as total, FROM_UNIXTIME(UNIX_TIMESTAMP(me.time), "%Y-%m-%d") as t',
+        'group_by' => 't',
+    })->all;
+
+    my $resPull = {};
+    my $resRoll = {};
+    
+    for my $item (@rows) {
+        $resPull->{$item->{data}->{t}} = $item->{data}->{total};
+    }
+
+    for my $item1 (@rows1) {
+        $resRoll->{$item1->{data}->{t}} = $item1->{data}->{total};
+    }
+
+    for (my $t = $params{searchStartDate}; $t le $params{searchEndDate}; $t = strftime "%Y-%m-%d", localtime(str2time($t) + 86400)) {
+        $resPull->{$t} //= 0;
+        $resRoll->{$t} //= 0;
+    }
+
+    my @keyPull = sort(keys %{$resPull});
+    my @valuePull;
+
+    my $keyStr = "";
+    my $valuePullStr = "";
+    my $valueRollStr = "";
+    for my $date (@keyPull) {
+        $keyStr .= "'".$date."',";
+        $valuePullStr .= $resPull->{$date}.",";
+        $valueRollStr .= $resRoll->{$date}.",";
+        #push(@valuePull, $resPull->{$date});
+    }
+    
+    $keyStr =~ s/^,|,$//g;
+    $keyStr = "[".$keyStr."]";
+    
+    $valuePullStr =~ s/^,|,$//g;
+    $valuePullStr = "[".$valuePullStr."]";
+
+    $valueRollStr =~ s/^,|,$//g;
+    $valueRollStr = "[".$valueRollStr."]";
+
+    # get the roll back count bet ween the search time
+
+
+    my %data = (
+        startDate   =>  $params{searchStartDate},
+        endDate     =>  $params{searchEndDate},
+        keyStr      =>  $keyStr,
+        valuePullStr => $valuePullStr,
+        valueRollStr => $valueRollStr,
+    );
+
+
+    $self->render('my_charts', %data);
+    return;
 }
 
 1;

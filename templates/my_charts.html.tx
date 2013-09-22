@@ -1,7 +1,17 @@
 : cascade layouts::default
 : around content -> {
+<div style="background:#F5F5F5;border-radius: 4px 4px 4px 4px;padding:8px 15px;margin-top:60px;">
+    <form action="" method="get" class="form-search" style="margin-bottom:0px">
+        <label>查询开始日期：</label>
+        <input name="searchStartDate" type="text" size="10" style="width:90px" class="datepicker" value="<: $startDate :>"/>
+        <label>查询结束日期：</label>
+        <input name="searchEndDate" type="text" size="10" style="width:90px" class="datepicker" value="<: $endDate :>"/>
+        <input type="submit" class="btn btn-primary" value="查询"/>
+    </form>
+</div>
 
-<div id="container" style="min-width: 310px; height: 400px; margin: 60px auto"></div>
+
+<div id="container" style="min-width: 310px; height: 400px; margin: 20px auto"></div>
 
 <script type="text/javascript">
 $(function () {
@@ -15,8 +25,7 @@ $(function () {
                 x: -20
             },
             xAxis: {
-                categories: ['22/09/13', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-                    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+                categories: <: $keyStr|raw :>
             },
             yAxis: {
                 title: {
@@ -39,10 +48,10 @@ $(function () {
             },
             series: [{
                 name: 'Pull',
-                data: [7.0, 6.9, 9.5, 14.5, 18.2, 21.5, 25.2, 26.5, 23.3, 18.3, 13.9, 9.6]
+                data:   <: $valuePullStr :> 
             }, {
                 name: 'Roll Back',
-                data: [-0.2, 0.8, 5.7, 11.3, 17.0, 22.0, 24.8, 24.1, 20.1, 14.1, 8.6, 2.5]
+                data: <: $valueRollStr :>
             }]
         });
     });
