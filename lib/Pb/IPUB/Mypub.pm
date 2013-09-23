@@ -403,6 +403,65 @@ sub hard_matches {
     return $w;
 }
 
+sub punchCard {
+    my $self = shift;
+    my $uid = $self->current_user->{info}{id};
+    my %params = $self->param_request({
+        searchStartDate =>  'STRING',
+        searchEndDate   =>  'STRING',
+    });
+
+    $params{searchStartDate} //= strftime "%Y-%m-%d", localtime(time() - 86400 * 7);
+    $params{searchEndDate} //= strftime("%Y-%m-%d", localtime());
+
+    $params{searchStartDate} =~ s/\-//g;
+    $params{searchEndDate} =~ s/\-//g;
+
+    my @rows = M('log', 'ipublish')->select({
+        -and   => [
+            'FROM_UNIXTIME(UNIX_TIMESTAMP(me.time), "%Y%m%d")'    =>  { '>=' => "$params{searchStartDate}" },
+            'FROM_UNIXTIME(UNIX_TIMESTAMP(me.time), "%Y%m%d")'    =>  { '<=' => "$params{searchEndDate}" },
+            'me.type'    =>  1,
+            'me.uid'     =>  $uid,
+        ],
+    }, {
+        'select' => 'count(*) as total, FROM_UNIXTIME(UNIX_TIMESTAMP(me.time), "%Y%m%d") as t, FROM_UNIXTIME(UNIX_TIMESTAMP(me.time), "%H") as h',
+        'group_by' => 't,h',
+    })->all; 
+   
+
+    my $tmpRes = {};
+    for my $item (@rows) {
+        $item->{data}->{h} =~ s/^0//g;
+        $tmpRes->{$item->{data}->{t}}->{$item->{data}->{h}} = $item->{data}->{total};
+    }
+   
+    my @dateStep;
+    my @allData;
+    
+    for (my $t = $params{searchStartDate}; $t le $params{searchEndDate}; $t = strftime "%Y%m%d", localtime(str2time($t) + 86400)) {
+        push(@dateStep, $t);
+        for (my $h = 0; $h <= 23; $h++) {
+            if ($tmpRes->{$t}->{$h} and $tmpRes->{$t}->{$h} ne 0) {
+                push(@allData, [$h,$t,$tmpRes->{$t}->{$h}]);
+            }
+        }
+    }
+
+    my %res = (
+        dateStep    =>  \@dateStep,
+        allData     =>  \@allData,
+    );
+
+    my $result = encode_json(\%res);
+    $result =~ s/"//g;
+    $result =~ s/allData/"allData"/g;
+    $result =~ s/dateStep/"dateStep"/g;
+    $self->render(text => $result);
+    return;
+}
+
+
 sub my_charts {
     my $self = shift;
     my $uid = $self->current_user->{info}{id};

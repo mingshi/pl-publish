@@ -14,6 +14,7 @@
 <script type="text/javascript" src="/js/jquery-1.8.2.min.js"></script> 
 <script type="text/javascript" src="/js/jquery-ui-1.9.1.custom.min.js"></script> 
 <script type="text/javascript" src="/highcharts/js/highcharts.js"></script> 
+<script type="text/javascript" src="/highcharts/js/highcharts-more.js"></script> 
 <script type="text/javascript" src="/highcharts/js/modules/exporting.js"></script> 
 </head> 
 <body  style="background-image:url(/static/bg1.jpg)">

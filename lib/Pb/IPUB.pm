@@ -11,6 +11,7 @@ use M::User;
 use JSON::XS;
 use MY::Utils;
 use utf8;
+use Pb::IPUB::Mypub;
 
 $M::User::SERVER_STATUS_OK = 1;
 $M::User::SERVER_STATUS_DELETE = 0;

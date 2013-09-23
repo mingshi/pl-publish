@@ -3,16 +3,29 @@
 <div style="background:#F5F5F5;border-radius: 4px 4px 4px 4px;padding:8px 15px;margin-top:60px;">
     <form action="" method="get" class="form-search" style="margin-bottom:0px">
         <label>查询开始日期：</label>
-        <input name="searchStartDate" type="text" size="10" style="width:90px" class="datepicker" value="<: $startDate :>"/>
+        <input id="searchStartDate" name="searchStartDate" type="text" size="10" style="width:90px" class="datepicker" value="<: $startDate :>"/>
         <label>查询结束日期：</label>
-        <input name="searchEndDate" type="text" size="10" style="width:90px" class="datepicker" value="<: $endDate :>"/>
+        <input id="searchEndDate" name="searchEndDate" type="text" size="10" style="width:90px" class="datepicker" value="<: $endDate :>"/>
         <input type="submit" class="btn btn-primary" value="查询"/>
     </form>
 </div>
 
-
-<div id="container" style="min-width: 310px; height: 400px; margin: 20px auto"></div>
-
+<div class="tabbable" style="margin: 20px auto">
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="#pull" data-toggle="tab">Pull</a></li>
+        <li><a href="#punch" data-toggle="tab">PunchCard</a></li>
+    </ul>
+    <div class="tab-content">
+        <div class="tab-pane active" id="pull">
+            <div id="container" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+        </div>
+        <div class="tab-pane" id="punch">
+            <div id="containerPunch" style="width:1170px; height: 400px; margin: 0 auto">
+                <img src="../static/loading1.gif" /> 
+            </div>
+        </div>
+    </div>
+</div>
 <script type="text/javascript">
 $(function () {
         $('#container').highcharts({
@@ -55,8 +68,51 @@ $(function () {
             }]
         });
     });
-    
-
 </script>
+
+<script type="text/javascript">
+$(function () {
+    var startDate = $("#searchStartDate").val();
+    var endDate = $("#searchEndDate").val();
+    $.ajax({
+        url : "/mypub/punchCard",
+        type : "post",
+        dataType : "json",
+        data : {'searchStartDate' : startDate, 'searchEndDate' : endDate} 
+    }).done(function(result) {
+        $('#containerPunch').highcharts({
+            chart: {
+                type: 'bubble',
+                zoomType: 'xy'
+            },
+
+            title: {
+                text: 'Your Punch Card, Guy!'
+            },
+       
+            xAxis: {
+                categories: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 23]
+            },
+
+            yAxis: {
+                title: {
+                    text:  "Pull Count",
+                },
+                categories: result.dateStep,
+            },
+
+            series: [{
+                name: 'pull',
+                data: result.allData,
+            }]
+        
+        });
+    });
+    
+});
+</script>
+
+
+
 
 :}
