@@ -444,6 +444,8 @@ sub punchCard {
         for (my $h = 0; $h <= 23; $h++) {
             if ($tmpRes->{$t}->{$h} and $tmpRes->{$t}->{$h} ne 0) {
                 push(@allData, [$h,$t,$tmpRes->{$t}->{$h}]);
+            } else {
+                push(@allData, [$h,$t,0]); 
             }
         }
     }

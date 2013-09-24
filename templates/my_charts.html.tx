@@ -38,7 +38,7 @@ $(function () {
                 x: -20
             },
             xAxis: {
-                categories: <: $keyStr|raw :>
+                categories: <: $keyStr|raw :>,
             },
             yAxis: {
                 title: {
@@ -48,7 +48,8 @@ $(function () {
                     value: 0,
                     width: 1,
                     color: '#808080'
-                }]
+                }],
+                min: 0
             },
             tooltip: {
                 valueSuffix: ''
@@ -89,7 +90,7 @@ $(function () {
             title: {
                 text: 'Your Punch Card, Guy!'
             },
-       
+    
             xAxis: {
                 categories: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 23]
             },
@@ -99,6 +100,13 @@ $(function () {
                     text:  "Pull Count",
                 },
                 categories: result.dateStep,
+            },
+            
+            plotOptions: {
+                bubble: {
+                    minSize: 0,
+                    maxSize: 50
+                }
             },
 
             series: [{
