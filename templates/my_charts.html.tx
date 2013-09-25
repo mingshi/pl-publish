@@ -75,6 +75,8 @@ $(function () {
 $(function () {
     var startDate = $("#searchStartDate").val();
     var endDate = $("#searchEndDate").val();
+    var yMin = startDate.replace(/-/g, "");
+    var yMax = endDate.replace(/-/g, "");
     $.ajax({
         url : "/mypub/punchCard",
         type : "post",
@@ -100,6 +102,8 @@ $(function () {
                     text:  "Pull Count",
                 },
                 categories: result.dateStep,
+                min: yMin,
+                max: yMax
             },
             
             plotOptions: {
