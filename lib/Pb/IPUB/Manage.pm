@@ -30,6 +30,7 @@ sub save_server {
             repo_address => 'STRING',
             server_root =>  'STRING',
             script  =>  'STRING',
+            pull_script =>  'STRING',
         });
 
         unless ($params{name} && $params{server_address} && $params{repo_address} && $params{server_root}) {
@@ -56,6 +57,7 @@ sub save_server {
         $ins->{script} = $params{script};
         $ins->{who} = $who;
         $ins->{attention} = $attention;
+        $ins->{pull_script} = $params{pull_script};
         my $m = R('server');
         my $server = $m->insert($ins);
         my $msg = '添加成功';
@@ -148,6 +150,8 @@ sub edit_server {
             server_root =>  'STRING',
             status  =>  'UINT',
             script  =>  'STRING',
+            script  =>  'STRING',
+            pull_script  =>  'STRING',
         });
 
         unless ($params{id})  {
@@ -187,6 +191,7 @@ sub edit_server {
             $upt->{status} = $params{status};
             $upt->{attention} = $attention;
             $upt->{script} = $params{script};
+            $upt->{pull_script} = $params{pull_script};
 
             $theServer->update($upt);
 

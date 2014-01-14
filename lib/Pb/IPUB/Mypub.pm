@@ -182,10 +182,21 @@ sub do_rollback {
             close MYFILE;
            
             my $res = "";
+
+            my $do_user;
+
+            if ($tmpServer->{data}->{pull_script}) {
+                ($do_user) = $tmpServer->{data}->{pull_script} =~ /su - (.*) -c/;
+            }
+           
             if ($params{commit}) {
                 $params{commit} =~ s/^\s+|\s+$//g;
                 if ($params{commit} =~ /^([0-9a-z]+)$/) {
-                    $res = `$dir/rock.sh ${dir} $tmpServer->{data}->{server_root} $file $params{commit}`;
+                    unless($do_user) {
+                        $res = `$dir/rock.sh ${dir} $tmpServer->{data}->{server_root} $file $params{commit}`;
+                    } else {
+                        $res = `$dir/rock_byUser.sh ${dir} $tmpServer->{data}->{server_root} $file $do_user $params{commit}`;
+                    }
                 } else {
                     if (-f $file) {
                         unlink($file);
@@ -194,7 +205,11 @@ sub do_rollback {
                     return;
                 }
             } else {
-                $res = `$dir/rock.sh ${dir} $tmpServer->{data}->{server_root} $file`;
+                unless ($do_user) {
+                    $res = `$dir/rock.sh ${dir} $tmpServer->{data}->{server_root} $file`;
+                } else {
+                    $res = `$dir/rock_byUser.sh ${dir} $tmpServer->{data}->{server_root} $file $do_user`;
+                }
             }
             
             my $qqRes = $res;
@@ -282,8 +297,14 @@ sub do_pull {
 
             print MYFILE join("\n", $self->param('server_address'));
             close MYFILE;
-
-            my $res = `$dir/pull.sh $tmpServer->{data}->{server_root} $file $tmpServer->{data}->{repo_address} ${dir}`;
+            
+            my $res;
+            unless ($tmpServer->{data}->{pull_script}) {
+                $res = `$dir/pull.sh $tmpServer->{data}->{server_root} $file $tmpServer->{data}->{repo_address} ${dir}`;
+            } else {
+                my $pull_script = $tmpServer->{data}->{pull_script};
+                $res = `$dir/pull.sh $tmpServer->{data}->{server_root} $file $tmpServer->{data}->{repo_address} ${dir} '$pull_script'`;
+            }
             my $qqRes = $res;
             $res =~ s/\r?\n/\<br \/\>/g;
             M('log')->insert({

@@ -38,17 +38,27 @@
                         <: $server.script :>
                     </div>
                 </div>
-
+                
+                : if ($server.script) {
                 <div class="control-group">
                     <div class="controls">
                         <input type="checkbox" value="1" name="is_run_script" id="is_run_script" /><span> 是否在代码更新之后执行上面得脚本 默认不执行 勾选执行</span>
                     </div>
                 </div>
-                
+                : }
+
+                <div class="control-group">
+                    <label class="control-label" for="pull_script">发布脚本:</label>
+                    <div class="controls">
+                        <: $server.pull_script :>
+                    </div>
+                </div>
+
                 <div class="control-group"> 
                     <div class="controls">
                         <input type="hidden" id="id" name="id" value="<: $server.id :>" />
                         <button class="btn btn-primary">确认回退</button>
+                        <a href="/mypub/detail?id=<: $server.id :>" class="btn btn-info" target="_blank" style="margin-left:50px;">查看详情</a>
                     </div>
                 </div>
             </fieldset>

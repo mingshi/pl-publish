@@ -38,7 +38,14 @@
                     <textarea type="text" id="script" name="script"></textarea><span> 代码更新之后需要执行的脚本，没有就不要填</span>
                 </div>
             </div>
-            
+
+            <div class="control-group">
+                <label class="control-label" for="pull_script">发布脚本:</label>
+                <div class="controls">
+                    <input type="text" id="pull_script" name="pull_script" /><span> git pull执行的脚本,可以指定pull用户</span>
+                </div>
+            </div>
+
             <div class="control-group">
                 <label class="control-label" for="who">分配用户:</label>
                 <div class="controls">

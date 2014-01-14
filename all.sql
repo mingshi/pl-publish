@@ -34,3 +34,5 @@ create table log (
 alter table server add attention varchar(255) NOT NULL DEFAULT '0' COMMENT '关注用户';
 
 alter table server add script text;
+
+alter table server add `pull_script` varchar(255);

@@ -50,6 +50,13 @@
                 </div>
 
                 <div class="control-group">
+                    <label class="control-label" for="pull_script">发布脚本:</label>
+                    <div class="controls">
+                        <input id="pull_script" name="pull_script" value="<: $detail.pull_script :>" /><span> git pull执行的脚本,可以指定pull用户</span>
+                    </div>
+                </div>
+                
+                <div class="control-group">
                     <label class="control-label" for="who">分配用户:</label>
                     <div class="controls">
                         : for $list_data -> $user {
